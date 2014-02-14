@@ -1,3 +1,7 @@
+gba_project*/
+nbproject*/
+*.elf
+
 # Object files
 *.o
 *.ko
