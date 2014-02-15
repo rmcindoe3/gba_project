@@ -80,20 +80,6 @@ extern DMA *dma;
 #define DMA_IRQ (1 << 30)
 #define DMA_ON (1 << 31)
 
-//Struct that contains the relevant information for an OBJECT
-
-typedef struct obj {
-    char row;
-    char col;
-    char height;
-    char width;
-    char type;
-    char velocity;
-    char delay;
-    u16 color;
-} OBJECT;
-
-
 void setPixel(int, int, unsigned short);
 void waitForVblank();
 void drawHorzLine(int row, int col, int length, volatile unsigned short color);

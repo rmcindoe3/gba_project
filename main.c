@@ -53,7 +53,7 @@ int main() {
  * Given an array of bullet OBJECTs, it will erase them
  *  from the screen.
  *********************************************************/
-void drawBullets(OBJECT* bull, int erase) {
+void drawBullets(BULLET* bull, int erase) {
     static int clr = 0;
     if(!erase) clr++;
     int i = 0;
@@ -68,7 +68,7 @@ void drawBullets(OBJECT* bull, int erase) {
 /** drawSpikes ********************************************
  *
  *********************************************************/
-void drawSpikes(OBJECT* spikes, int erase) {
+void drawSpikes(SPIKE* spikes, int erase) {
     int i = 0;
     if(erase) {
 	for(i = 0; i < NUM_SPIKES; i++) {
@@ -90,7 +90,7 @@ void drawSpikes(OBJECT* spikes, int erase) {
  * Draws a ship at (row, col).  ERASE is true when you want this method to 
  * erase the ship at the given location instead of draw a new one. 
  *********************************************************/
-void drawShip(OBJECT* ship, int erase) {
+void drawShip(SHIP* ship, int erase) {
     if (!erase) {
 	int r;
 	for(r = 0; r < 20; r++) {
@@ -105,7 +105,7 @@ void drawShip(OBJECT* ship, int erase) {
 /** drawSpike ********************************************
  *
  *********************************************************/
-void drawSpike(OBJECT* spike) {
+void drawSpike(SPIKE* spike) {
     int i = 0;
     for(i = 0; i < 10; i++) {
 	DMANow(3, &(spike_picture[i*20]), &VIDEO_BUFFER[OFFSET(spike->row + i, spike->col, SCREENWIDTH)],
@@ -120,7 +120,7 @@ void drawSpike(OBJECT* spike) {
  *  a higher height on the screen than the ship's current
  *  column.  If it does, then move the ship to that column
  *********************************************************/
-void moveShip(OBJECT* ship, OBJECT* spikes) {
+void moveShip(SHIP* ship, SPIKE* spikes) {
     int curr_lane = ship->col / 20;
 
     //If a neighboring lane has a spike with a higher location, switch to that lane
@@ -144,10 +144,10 @@ void moveShip(OBJECT* ship, OBJECT* spikes) {
 /** moveBullets ******************************************
  * Takes in an array of bullet OBJECTs and moves them.
  *********************************************************/
-void moveBullets(OBJECT* obj) {
+void moveBullets(BULLET* obj) {
     int i = 0;
     for(i = 0; i < MAX_BULLETS; i++) {
-	OBJECT* temp = (&(obj[i]));
+	BULLET* temp = (&(obj[i]));
 	if(temp->velocity != 0) {
 	    temp->row += temp->velocity;
 	    if(temp->row <= 10) {
@@ -162,7 +162,7 @@ void moveBullets(OBJECT* obj) {
  * Takes in our array of spike OBJECTs and moves all of
  *  them. 
  *********************************************************/
-void moveSpikes(OBJECT* obj) {
+void moveSpikes(SPIKE* obj) {
     int i = 0;
 
     //If there are less than 8 spikes currently falling, then drop one...
@@ -182,7 +182,7 @@ void moveSpikes(OBJECT* obj) {
 	}
     }
     for(i = 0; i < NUM_SPIKES; i++) {
-	OBJECT* temp = (&(obj[i]));
+	SPIKE* temp = (&(obj[i]));
 	if(temp->velocity) {				//If the spike has a velocity...
 	    if(temp->row == 149) {		//If the spike is one step away from the bottom we need to initialize the reset delay
 		temp->delay = 50;
@@ -205,7 +205,14 @@ void moveSpikes(OBJECT* obj) {
  * Takes in two OBJECT's and sees if those two objects are
  *  overlapping.
  *********************************************************/
-char collision(OBJECT* ship, OBJECT* spike) {
+char collisionShip(SHIP* ship, SPIKE* spike) {
+    if((((spike->col + spike->width) > ship->col)) && (spike->col < (ship->col + ship->width))) 
+	if((((spike->row + spike->height) > ship->row)) && (spike->row < (ship->row + ship->height)))
+	    return 1;
+    return 0;
+}
+
+char collisionBullet(SPIKE* ship, BULLET* spike) {
     if((((spike->col + spike->width) > ship->col)) && (spike->col < (ship->col + ship->width))) 
 	if((((spike->row + spike->height) > ship->row)) && (spike->row < (ship->row + ship->height)))
 	    return 1;
@@ -224,7 +231,7 @@ void checkGameButtons() {
     if(BUTTON_PRESSED(BUTTON_A)) {
 	if(num_bullets < MAX_BULLETS) {
 	    num_bullets++;
-	    OBJECT* temp = bullets;
+	    BULLET* temp = bullets;
 	    while(temp->velocity != 0) temp++;
 	    temp->row = ship.row - 5;
 	    temp->col = ship.col + 9;
@@ -272,7 +279,7 @@ void checkCollisions() {
     int i, j;
     /**** THIS SECTION DETECTS ANY COLLISIONS BETWEEN MOVING OBJECTS ****/
     for (i = 0; i < NUM_SPIKES; i++) {
-	if(collision(&ship, &(spikes[i]))) {
+	if(collisionShip(&ship, &(spikes[i]))) {
 	    drawRect(spikes[i].row, spikes[i].col, spikes[i].height, spikes[i].width, BGCOLOR);
 	    spikes[i].velocity = 0;
 	    spikes[i].row = 0;
@@ -282,7 +289,7 @@ void checkCollisions() {
 	}
 	for(j = 0; j < MAX_BULLETS; j++) {
 	    if(bullets[j].velocity != 0 && spikes[i].velocity) {
-		if(collision(&(spikes[i]), &(bullets[j]))) {
+		if(collisionBullet(&(spikes[i]), &(bullets[j]))) {
 		    drawRect(spikes[i].row, spikes[i].col, spikes[i].height, spikes[i].width, BGCOLOR);
 		    spikes[i].velocity = 0;
 		    spikes[i].row = 0;
@@ -350,7 +357,6 @@ void updateOldVariables() {
 	bullets_old[i].height = bullets[i].height;
 	bullets_old[i].width = bullets[i].width;
 	bullets_old[i].velocity = bullets[i].velocity;
-	bullets_old[i].color = bullets[i].color;
     }
 
     for (i = 0; i < NUM_SPIKES; i++) {
@@ -360,16 +366,12 @@ void updateOldVariables() {
 	spikes_old[i].width = spikes[i].width;
 	spikes_old[i].velocity = spikes[i].velocity;
 	spikes_old[i].delay = spikes[i].delay;
-	spikes_old[i].type = spikes[i].type;
-	spikes_old[i].color = spikes[i].color;
     }
 
     ship_old.row = ship.row;
     ship_old.col = ship.col;
     ship_old.height = ship_old.height;
     ship_old.width = ship_old.width;
-    ship_old.velocity = ship_old.velocity;
-    ship_old.type = ship_old.type;
 }
 
 void displayPauseScreen() {
@@ -409,8 +411,6 @@ void init() {
 	spikes[i].width = 20;
 	spikes[i].velocity = 0;
 	spikes[i].delay = 0;
-	spikes[i].type = SPIKE;
-	spikes[i].color = RED;
 
 	spikes_old[i].col = spikes[i].col;
 	spikes_old[i].row = spikes[i].row;
@@ -418,33 +418,25 @@ void init() {
 	spikes_old[i].width = spikes[i].width;
 	spikes_old[i].velocity = spikes[i].velocity;
 	spikes_old[i].delay = spikes[i].delay;
-	spikes_old[i].type = spikes[i].type;
-	spikes_old[i].color = spikes[i].color;
     }
 
     ship.row = 120;
     ship.col = 80;
     ship.height = 20;
     ship.width = 20;
-    ship.velocity = 1;
-    ship.type = SHIP;
 
     ship_old.row = ship.row;
     ship_old.col = ship.col;
     ship_old.height = ship.height;
     ship_old.width = ship.width;
-    ship_old.velocity = ship.velocity;
-    ship_old.type = ship.type;
 
     for(i = 0; i < MAX_BULLETS; i++) {
 	bullets[i].height = 5;
 	bullets[i].width = 3;
 	bullets[i].velocity = 0;
-	bullets[i].color = BLUE;
 
 	bullets_old[i].height = bullets[i].height;
 	bullets_old[i].width = bullets[i].width;
 	bullets_old[i].velocity = bullets[i].velocity;
-	bullets_old[i].color = bullets[i].color;
     }
 }
