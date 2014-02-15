@@ -1,6 +1,7 @@
 gba_project*/
 nbproject*/
 *.elf
+*.swp
 
 # Object files
 *.o

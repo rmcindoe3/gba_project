@@ -23,16 +23,16 @@
 #define WHITE COLOR(31, 31, 31)
 
 // Buttons
-#define BUTTON_A			(1<<0)
-#define BUTTON_B			(1<<1)
-#define BUTTON_SELECT	(1<<2)
-#define BUTTON_START		(1<<3)
-#define BUTTON_RIGHT		(1<<4)
-#define BUTTON_LEFT		(1<<5)
-#define BUTTON_UP			(1<<6)
-#define BUTTON_DOWN		(1<<7)
-#define BUTTON_R			(1<<8)
-#define BUTTON_L			(1<<9)
+#define BUTTON_A (1<<0)
+#define BUTTON_B (1<<1)
+#define BUTTON_SELECT (1<<2)
+#define BUTTON_START (1<<3)
+#define BUTTON_RIGHT (1<<4)
+#define BUTTON_LEFT (1<<5)
+#define BUTTON_UP (1<<6)
+#define BUTTON_DOWN (1<<7)
+#define BUTTON_R (1<<8)
+#define BUTTON_L (1<<9)
 
 #define BUTTONS *(volatile unsigned int *)0x4000130
 #define BUTTON_HELD(key)  (~(BUTTONS) & (key))
@@ -45,9 +45,9 @@ typedef unsigned short u16;
 void DMANow(int channel, volatile void* source, void* destination, unsigned int control);
 
 // DMA channel 3 register definitions
-#define REG_DMA3SAD         *(volatile u32*)0x40000D4  // source address
-#define REG_DMA3DAD         *(volatile u32*)0x40000D8  // destination address
-#define REG_DMA3CNT         *(volatile u32*)0x40000DC  // control register
+#define REG_DMA3SAD *(volatile u32*)0x40000D4  // source address
+#define REG_DMA3DAD *(volatile u32*)0x40000D8  // destination address
+#define REG_DMA3CNT *(volatile u32*)0x40000DC  // control register
 
 typedef volatile struct
 {

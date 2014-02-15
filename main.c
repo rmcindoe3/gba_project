@@ -9,7 +9,7 @@ unsigned int oldButtons;
 int main() {
     int i = 0; //loop variable
     REG_DISPCTL = 1027; //sets up the display in mode 3 with the settings we want
-    fillBackground(CYAN); //clears the screen in case anything else is present
+    fillBackground(BGCOLOR); //clears the screen in case anything else is present
 
     init();
 
@@ -22,23 +22,13 @@ int main() {
 	if(state == GAME) {
 
 	    checkGameButtons();
-
 	    moveGameObjects();
-
 	    checkCollisions();
 
 	    waitForVblank();
 
-	    //Clears the screen if the game was just unpaused.
-	    if(state_old == PAUSE) {
-		state_old = GAME;
-		fillBackground(CYAN);
-	    }
-
 	    eraseOldObjects();
-
 	    drawNewObjects();
-
 	    drawGameText();
 
 	    updateOldVariables();
@@ -47,88 +37,15 @@ int main() {
 	    pause(2);
 
 	} else if(state == PAUSE) {
-	    if(state_old == GAME) {
-		fillBackground(BLACK);
-		char pauseStr[] = "PAUSED";
-		sprintf(scoreStr, "SCORE: %04d", score);
-		drawString(86, 120-33, scoreStr, BLUE);
-		drawString(76, 102, pauseStr, BLUE);
 
+	    if(state_old == GAME) {
+		displayPauseScreen();
 		state_old = PAUSE;
 	    }
-	    if(BUTTON_PRESSED(BUTTON_START)) {
-		state = GAME;
-	    }
-	    if(BUTTON_PRESSED(BUTTON_SELECT)) {
-		init(spikes, spikes_old, bullets, bullets_old, &ship, &ship_old);
-		fillBackground(BLACK);
-		char pauseStr[] = "PAUSED";
-		drawString(76, 102, pauseStr, BLUE);
-		score = 0;
-		num_falling = 0;
-		num_bullets = 0;
-	    }
+
+	    checkPauseButtons();
 
 	}
-    }
-}
-
-/** collision ********************************************
- * Takes in two OBJECT's and sees if those two objects are
- *  overlapping.
- *********************************************************/
-char collision(OBJECT* ship, OBJECT* spike) {
-    if((((spike->col + spike->width) > ship->col)) && (spike->col < (ship->col + ship->width))) 
-	if((((spike->row + spike->height) > ship->row)) && (spike->row < (ship->row + ship->height)))
-	    return 1;
-    return 0;
-}
-
-/** drawShip ********************************************
- * Draws a ship at (row, col).  ERASE is true when you want this method to 
- * erase the ship at the given location instead of draw a new one. 
- *********************************************************/
-void drawShip(OBJECT* ship, int ERASE) {
-    if (!ERASE) {
-	int r;
-	for(r = 0; r < 20; r++) {
-	    DMANow(3, &(ship_picture[r*20]), &VIDEO_BUFFER[OFFSET(ship->row + r, ship->col, SCREENWIDTH)],
-		    20 |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
-	}
-    } else {
-	drawRect(ship->row, ship->col, 20, 20, CYAN);
-    }
-}
-
-/** drawSpikes ********************************************
- *
- *********************************************************/
-void drawSpikes(OBJECT* spikes, int erase) {
-    int i = 0;
-    if(erase) {
-	for (i = 0; i < NUM_SPIKES; i++) {
-	    if(spikes[i].velocity && !spikes[i].delay) {
-		drawHorzLine(spikes[i].row, spikes[i].col, 20, CYAN);
-	    }
-	}
-    }
-    else {
-	for(i = 0; i < 10; i++) {
-	    if(spikes[i].velocity && !spikes[i].delay) {
-		drawSpike(&(spikes[i]));
-	    }
-	}
-    }
-}
-
-/** drawSpike ********************************************
- *
- *********************************************************/
-void drawSpike(OBJECT* spike) {
-    int i = 0;
-    for(i = 0; i < 10; i++) {
-	DMANow(3, &(spike_picture[i*20]), &VIDEO_BUFFER[OFFSET(spike->row + i, spike->col, SCREENWIDTH)],
-		20 |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
     }
 }
 
@@ -142,9 +59,57 @@ void drawBullets(OBJECT* bull, int erase) {
     int i = 0;
     for(i = 0; i < MAX_BULLETS; i++) {
 	if(bull[i].velocity != 0) {
-	    if(erase) drawRect(bull[i].row, bull[i].col, bull[i].height, bull[i].width, CYAN);
+	    if(erase) drawRect(bull[i].row, bull[i].col, bull[i].height, bull[i].width, BGCOLOR);
 	    else drawRect(bull[i].row, bull[i].col, bull[i].height, bull[i].width, bull_colors[clr%6]);
 	}
+    }
+}
+
+/** drawSpikes ********************************************
+ *
+ *********************************************************/
+void drawSpikes(OBJECT* spikes, int erase) {
+    int i = 0;
+    if(erase) {
+	for(i = 0; i < NUM_SPIKES; i++) {
+	    if(spikes[i].velocity && !spikes[i].delay) {
+		drawHorzLine(spikes[i].row, spikes[i].col, 20, BGCOLOR);
+	    }
+	}
+    }
+    else {
+	for(i = 0; i < 10; i++) {
+	    if(spikes[i].velocity && !spikes[i].delay) {
+		drawSpike(&(spikes[i]));
+	    }
+	}
+    }
+}
+
+/** drawShip ********************************************
+ * Draws a ship at (row, col).  ERASE is true when you want this method to 
+ * erase the ship at the given location instead of draw a new one. 
+ *********************************************************/
+void drawShip(OBJECT* ship, int erase) {
+    if (!erase) {
+	int r;
+	for(r = 0; r < 20; r++) {
+	    DMANow(3, &(ship_picture[r*20]), &VIDEO_BUFFER[OFFSET(ship->row + r, ship->col, SCREENWIDTH)],
+		    20 |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
+	}
+    } else {
+	drawRect(ship->row, ship->col, 20, 20, BGCOLOR);
+    }
+}
+
+/** drawSpike ********************************************
+ *
+ *********************************************************/
+void drawSpike(OBJECT* spike) {
+    int i = 0;
+    for(i = 0; i < 10; i++) {
+	DMANow(3, &(spike_picture[i*20]), &VIDEO_BUFFER[OFFSET(spike->row + i, spike->col, SCREENWIDTH)],
+		20 |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
     }
 }
 
@@ -172,6 +137,23 @@ void moveShip(OBJECT* ship, OBJECT* spikes) {
 	    ship->col += 20;
 	} else if((&(spikes[curr_lane]))->row%140 > (&(spikes[curr_lane-1]))->row%140) {
 	    ship->col -= 20;
+	}
+    }
+}
+
+/** moveBullets ******************************************
+ * Takes in an array of bullet OBJECTs and moves them.
+ *********************************************************/
+void moveBullets(OBJECT* obj) {
+    int i = 0;
+    for(i = 0; i < MAX_BULLETS; i++) {
+	OBJECT* temp = (&(obj[i]));
+	if(temp->velocity != 0) {
+	    temp->row += temp->velocity;
+	    if(temp->row <= 10) {
+		temp->velocity = 0;
+		num_bullets--;
+	    }
 	}
     }
 }
@@ -219,21 +201,15 @@ void moveSpikes(OBJECT* obj) {
     }
 }
 
-/** moveBullets ******************************************
- * Takes in an array of bullet OBJECTs and moves them.
+/** collision ********************************************
+ * Takes in two OBJECT's and sees if those two objects are
+ *  overlapping.
  *********************************************************/
-void moveBullets(OBJECT* obj) {
-    int i = 0;
-    for(i = 0; i < MAX_BULLETS; i++) {
-	OBJECT* temp = (&(obj[i]));
-	if(temp->velocity != 0) {
-	    temp->row += temp->velocity;
-	    if(temp->row <= 10) {
-		temp->velocity = 0;
-		num_bullets--;
-	    }
-	}
-    }
+char collision(OBJECT* ship, OBJECT* spike) {
+    if((((spike->col + spike->width) > ship->col)) && (spike->col < (ship->col + ship->width))) 
+	if((((spike->row + spike->height) > ship->row)) && (spike->row < (ship->row + ship->height)))
+	    return 1;
+    return 0;
 }
 
 void checkGameButtons() {
@@ -262,11 +238,12 @@ void checkGameButtons() {
 
     if(BUTTON_PRESSED(BUTTON_SELECT)) {
 	init(spikes, spikes_old, bullets, bullets_old, &ship, &ship_old);
-	fillBackground(CYAN);
+	fillBackground(BGCOLOR);
 	score = 0;
 	num_falling = 0;
 	num_bullets = 0;
     }
+
 }
 
 void moveGameObjects() {
@@ -296,7 +273,7 @@ void checkCollisions() {
     /**** THIS SECTION DETECTS ANY COLLISIONS BETWEEN MOVING OBJECTS ****/
     for (i = 0; i < NUM_SPIKES; i++) {
 	if(collision(&ship, &(spikes[i]))) {
-	    drawRect(spikes[i].row, spikes[i].col, spikes[i].height, spikes[i].width, CYAN);
+	    drawRect(spikes[i].row, spikes[i].col, spikes[i].height, spikes[i].width, BGCOLOR);
 	    spikes[i].velocity = 0;
 	    spikes[i].row = 0;
 	    num_falling--;
@@ -306,7 +283,7 @@ void checkCollisions() {
 	for(j = 0; j < MAX_BULLETS; j++) {
 	    if(bullets[j].velocity != 0 && spikes[i].velocity) {
 		if(collision(&(spikes[i]), &(bullets[j]))) {
-		    drawRect(spikes[i].row, spikes[i].col, spikes[i].height, spikes[i].width, CYAN);
+		    drawRect(spikes[i].row, spikes[i].col, spikes[i].height, spikes[i].width, BGCOLOR);
 		    spikes[i].velocity = 0;
 		    spikes[i].row = 0;
 		    num_falling--;
@@ -323,6 +300,13 @@ void checkCollisions() {
 }
 
 void eraseOldObjects() {
+
+    //Clears the screen if the game was just unpaused.
+    if(state_old == PAUSE) {
+	state_old = GAME;
+	fillBackground(BGCOLOR);
+    }
+
     /**** THIS SECTION ERASES OLD STUFF ****/
     drawSpikes(spikes_old, TRUE);
     drawBullets(bullets_old, TRUE);
@@ -341,7 +325,7 @@ void drawGameText() {
     /**** THIS SECTION DRAWS THE TEXT TO THE SCREEN ****/
     if(auto_pilot_change) {
 	auto_pilot_change = 0;
-	drawRect(150, 3+12*6, 8, 6*4, CYAN);
+	drawRect(150, 3+12*6, 8, 6*4, BGCOLOR);
     }
 
     if(autopilot)	drawString(150, 3, "Auto-Pilot: ON!", GREEN);
@@ -349,7 +333,7 @@ void drawGameText() {
 
     if(score_change) {
 	score_change = 0;
-	drawRect(150, 160, 8, 6*12, CYAN);
+	drawRect(150, 160, 8, 6*12, BGCOLOR);
     }
 
     sprintf(scoreStr, "SCORE: %04d", score);
@@ -386,6 +370,29 @@ void updateOldVariables() {
     ship_old.width = ship_old.width;
     ship_old.velocity = ship_old.velocity;
     ship_old.type = ship_old.type;
+}
+
+void displayPauseScreen() {
+    fillBackground(BLACK);
+    char pauseStr[] = "PAUSED";
+    sprintf(scoreStr, "SCORE: %04d", score);
+    drawString(86, 120-33, scoreStr, BLUE);
+    drawString(76, 102, pauseStr, BLUE);
+}
+
+void checkPauseButtons() {
+    if(BUTTON_PRESSED(BUTTON_START)) {
+	state = GAME;
+    }
+    if(BUTTON_PRESSED(BUTTON_SELECT)) {
+	init(spikes, spikes_old, bullets, bullets_old, &ship, &ship_old);
+	fillBackground(BLACK);
+	char pauseStr[] = "PAUSED";
+	drawString(76, 102, pauseStr, BLUE);
+	score = 0;
+	num_falling = 0;
+	num_bullets = 0;
+    }
 }
 
 /** init **************************************************
