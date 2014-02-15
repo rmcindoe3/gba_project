@@ -3,7 +3,7 @@
 #ifndef MAIN_H
 #define	MAIN_H
 
-#define NUM_SPIKES 12
+#define NUM_ENEMIES 12
 #define MAX_BULLETS 5
 
 #define BGCOLOR CYAN
@@ -24,15 +24,15 @@ typedef struct ship {
     char width;
 } SHIP;
 
-//Struct that contains relevant information for SPIKES
-typedef struct spike {
+//Struct that contains relevant information for ENEMY
+typedef struct enemy {
     char row;
     char col;
     char height;
     char width;
     char velocity;
     char delay;
-} SPIKE;
+} ENEMY;
 
 //Struct that contains relevant information for BULLETs
 typedef struct bullet {
@@ -46,17 +46,17 @@ typedef struct bullet {
 u16 state = GAME;
 u16 state_old = GAME;
 
-u16 num_falling = 0;
+u16 num_active_enemies = 0;
 u16 num_bullets = 0;
 u16 autopilot = FALSE;
 u16 score = 0;
 
 SHIP ship;
-SPIKE spikes[NUM_SPIKES];
+ENEMY enemies[NUM_ENEMIES];
 BULLET bullets[MAX_BULLETS];
 
 SHIP ship_old;
-SPIKE spikes_old[NUM_SPIKES];
+ENEMY enemies_old[NUM_ENEMIES];
 BULLET bullets_old[MAX_BULLETS];
 
 char scoreStr[20];			//char array to store string that will display score
@@ -66,16 +66,16 @@ u16 auto_pilot_change = 0;
 u16 score_change = 0;
 
 void drawBullets(BULLET* bullets, int erase);
-void drawSpikes(SPIKE* spikes, int erase);
+void drawEnemies(ENEMY* enemies, int erase);
 void drawShip(SHIP* ship, int erase);
-void drawSpike(SPIKE* spike);
+void drawEnemy(ENEMY* enemy);
 
-void moveShip(SHIP* ship, SPIKE* spikes);
+void moveShip(SHIP* ship, ENEMY* enemies);
 void moveBullets(BULLET* obj);
-void moveSpikes(SPIKE* obj);
+void moveEnemies(ENEMY* obj);
 
-char collisionShip(SHIP* ship, SPIKE* spike);
-char collisionBullet(SPIKE* ship, BULLET* spike);
+char collisionShip(SHIP* ship, ENEMY* spike);
+char collisionBullet(ENEMY* ship, BULLET* spike);
 
 void init();
 

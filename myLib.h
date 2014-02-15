@@ -100,7 +100,7 @@ void pause(int);
 #define WHI COLOR(31, 31, 31)
 
 extern const unsigned short ship_picture[20*20];
-extern const unsigned short spike_picture[20*10];
+extern const unsigned short enemy_picture[20*10];
 extern const unsigned short bull_colors[6];
 
 #endif	/* MYLIB_H */

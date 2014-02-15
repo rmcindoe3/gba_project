@@ -65,22 +65,22 @@ void drawBullets(BULLET* bull, int erase) {
     }
 }
 
-/** drawSpikes ********************************************
+/** drawEnemies ********************************************
  *
  *********************************************************/
-void drawSpikes(SPIKE* spikes, int erase) {
+void drawEnemies(ENEMY* enemies, int erase) {
     int i = 0;
     if(erase) {
-	for(i = 0; i < NUM_SPIKES; i++) {
-	    if(spikes[i].velocity && !spikes[i].delay) {
-		drawHorzLine(spikes[i].row, spikes[i].col, 20, BGCOLOR);
+	for(i = 0; i < NUM_ENEMIES; i++) {
+	    if(enemies[i].velocity && !enemies[i].delay) {
+		drawHorzLine(enemies[i].row, enemies[i].col, 20, BGCOLOR);
 	    }
 	}
     }
     else {
 	for(i = 0; i < 10; i++) {
-	    if(spikes[i].velocity && !spikes[i].delay) {
-		drawSpike(&(spikes[i]));
+	    if(enemies[i].velocity && !enemies[i].delay) {
+		drawEnemy(&(enemies[i]));
 	    }
 	}
     }
@@ -102,40 +102,40 @@ void drawShip(SHIP* ship, int erase) {
     }
 }
 
-/** drawSpike ********************************************
+/** drawEnemy ********************************************
  *
  *********************************************************/
-void drawSpike(SPIKE* spike) {
+void drawEnemy(ENEMY* enemy) {
     int i = 0;
     for(i = 0; i < 10; i++) {
-	DMANow(3, &(spike_picture[i*20]), &VIDEO_BUFFER[OFFSET(spike->row + i, spike->col, SCREENWIDTH)],
+	DMANow(3, &(enemy_picture[i*20]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
 		20 |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
     }
 }
 
 /** moveShip *********************************************
  * Autopilot algorithm.  Takes in our ship OBJECT and the
- *  array of spike OBJECTs.  Basically determines if any 
- *  columns neighboring the ship have a spike that is at
+ *  array of enemy OBJECTs.  Basically determines if any 
+ *  columns neighboring the ship have a enemy that is at
  *  a higher height on the screen than the ship's current
  *  column.  If it does, then move the ship to that column
  *********************************************************/
-void moveShip(SHIP* ship, SPIKE* spikes) {
+void moveShip(SHIP* ship, ENEMY* enemies) {
     int curr_lane = ship->col / 20;
 
-    //If a neighboring lane has a spike with a higher location, switch to that lane
+    //If a neighboring lane has a enemy with a higher location, switch to that lane
     if(curr_lane == 0) {
-	if((&(spikes[curr_lane]))->row%140 > (&(spikes[curr_lane+1]))->row%140) {
+	if((&(enemies[curr_lane]))->row%140 > (&(enemies[curr_lane+1]))->row%140) {
 	    ship->col += 20;
 	}
     } else if(curr_lane == 11) {
-	if((&(spikes[curr_lane]))->row%140 > (&(spikes[curr_lane-1]))->row%140) {
+	if((&(enemies[curr_lane]))->row%140 > (&(enemies[curr_lane-1]))->row%140) {
 	    ship->col -= 20;
 	}
     } else {
-	if((&(spikes[curr_lane]))->row%140 > (&(spikes[curr_lane+1]))->row%140) {
+	if((&(enemies[curr_lane]))->row%140 > (&(enemies[curr_lane+1]))->row%140) {
 	    ship->col += 20;
-	} else if((&(spikes[curr_lane]))->row%140 > (&(spikes[curr_lane-1]))->row%140) {
+	} else if((&(enemies[curr_lane]))->row%140 > (&(enemies[curr_lane-1]))->row%140) {
 	    ship->col -= 20;
 	}
     }
@@ -158,45 +158,45 @@ void moveBullets(BULLET* obj) {
     }
 }
 
-/** moveSpikes *******************************************
- * Takes in our array of spike OBJECTs and moves all of
+/** moveEnemies *******************************************
+ * Takes in our array of enemy OBJECTs and moves all of
  *  them. 
  *********************************************************/
-void moveSpikes(SPIKE* obj) {
+void moveEnemies(ENEMY* obj) {
     int i = 0;
 
-    //If there are less than 8 spikes currently falling, then drop one...
-    if(num_falling < 8) {
-	//This rand() is to make sure the spikes don't all fall one after each other
+    //If there are less than 8 enemies currently falling, then drop one...
+    if(num_active_enemies < 8) {
+	//This rand() is to make sure the enemies don't all fall one after each other
 	if(!(rand()%20)) {
-	    int test = 1;			//loop conditional - stores whether or not we've found a spike that's not already falling
-	    int ind = 0;			//stores the index of the spike we're testing
+	    int test = 1;			//loop conditional - stores whether or not we've found a enemy that's not already falling
+	    int ind = 0;			//stores the index of the enemy we're testing
 	    while(test) {
-		ind = rand()%12;							//randomly chose a lane to drop spike in
+		ind = rand()%12;							//randomly chose a lane to drop enemy in
 		if(!((&(obj[ind]))->velocity)) {		//If the object isn't moving, start moving it and get out of the loop
 		    (&(obj[ind]))->velocity = 1;
 		    test = 0;
 		}
 	    }
-	    num_falling++;
+	    num_active_enemies++;
 	}
     }
-    for(i = 0; i < NUM_SPIKES; i++) {
-	SPIKE* temp = (&(obj[i]));
-	if(temp->velocity) {				//If the spike has a velocity...
-	    if(temp->row == 149) {		//If the spike is one step away from the bottom we need to initialize the reset delay
+    for(i = 0; i < NUM_ENEMIES; i++) {
+	ENEMY* temp = (&(obj[i]));
+	if(temp->velocity) {				//If the enemy has a velocity...
+	    if(temp->row == 149) {		//If the enemy is one step away from the bottom we need to initialize the reset delay
 		temp->delay = 50;
 		temp->row += temp->velocity;
-	    } else if(temp->row == 150) {	//If the spike is already at the bottom
+	    } else if(temp->row == 150) {	//If the enemy is already at the bottom
 		if(temp->delay) {				//Wait the delay's length
 		    temp->delay--;
-		} else {							//Reset the spike to the top
-		    drawSpikes(temp, TRUE);
+		} else {							//Reset the enemy to the top
+		    drawEnemies(temp, TRUE);
 		    temp->row = 0;
 		    temp->velocity = 0;
-		    num_falling--;
+		    num_active_enemies--;
 		}
-	    } else temp->row += temp->velocity;		//For spikes not near the bottom...
+	    } else temp->row += temp->velocity;		//For enemies not near the bottom...
 	}
     }
 }
@@ -205,14 +205,14 @@ void moveSpikes(SPIKE* obj) {
  * Takes in two OBJECT's and sees if those two objects are
  *  overlapping.
  *********************************************************/
-char collisionShip(SHIP* ship, SPIKE* spike) {
-    if((((spike->col + spike->width) > ship->col)) && (spike->col < (ship->col + ship->width))) 
-	if((((spike->row + spike->height) > ship->row)) && (spike->row < (ship->row + ship->height)))
+char collisionShip(SHIP* ship, ENEMY* enemy) {
+    if((((enemy->col + enemy->width) > ship->col)) && (enemy->col < (ship->col + ship->width))) 
+	if((((enemy->row + enemy->height) > ship->row)) && (enemy->row < (ship->row + ship->height)))
 	    return 1;
     return 0;
 }
 
-char collisionBullet(SPIKE* ship, BULLET* spike) {
+char collisionBullet(ENEMY* ship, BULLET* spike) {
     if((((spike->col + spike->width) > ship->col)) && (spike->col < (ship->col + ship->width))) 
 	if((((spike->row + spike->height) > ship->row)) && (spike->row < (ship->row + ship->height)))
 	    return 1;
@@ -244,10 +244,10 @@ void checkGameButtons() {
     }
 
     if(BUTTON_PRESSED(BUTTON_SELECT)) {
-	init(spikes, spikes_old, bullets, bullets_old, &ship, &ship_old);
+	init(enemies, enemies_old, bullets, bullets_old, &ship, &ship_old);
 	fillBackground(BGCOLOR);
 	score = 0;
-	num_falling = 0;
+	num_active_enemies = 0;
 	num_bullets = 0;
     }
 
@@ -267,9 +267,9 @@ void moveGameObjects() {
 		ship.col += 5;
 	    }
 	}
-    } else moveShip(&ship, spikes);
+    } else moveShip(&ship, enemies);
 
-    moveSpikes(spikes);
+    moveEnemies(enemies);
     moveBullets(bullets);
 
 }
@@ -278,22 +278,22 @@ void checkCollisions() {
 
     int i, j;
     /**** THIS SECTION DETECTS ANY COLLISIONS BETWEEN MOVING OBJECTS ****/
-    for (i = 0; i < NUM_SPIKES; i++) {
-	if(collisionShip(&ship, &(spikes[i]))) {
-	    drawRect(spikes[i].row, spikes[i].col, spikes[i].height, spikes[i].width, BGCOLOR);
-	    spikes[i].velocity = 0;
-	    spikes[i].row = 0;
-	    num_falling--;
+    for (i = 0; i < NUM_ENEMIES; i++) {
+	if(collisionShip(&ship, &(enemies[i]))) {
+	    drawRect(enemies[i].row, enemies[i].col, enemies[i].height, enemies[i].width, BGCOLOR);
+	    enemies[i].velocity = 0;
+	    enemies[i].row = 0;
+	    num_active_enemies--;
 	    score = 0;
 	    score_change = 1;
 	}
 	for(j = 0; j < MAX_BULLETS; j++) {
-	    if(bullets[j].velocity != 0 && spikes[i].velocity) {
-		if(collisionBullet(&(spikes[i]), &(bullets[j]))) {
-		    drawRect(spikes[i].row, spikes[i].col, spikes[i].height, spikes[i].width, BGCOLOR);
-		    spikes[i].velocity = 0;
-		    spikes[i].row = 0;
-		    num_falling--;
+	    if(bullets[j].velocity != 0 && enemies[i].velocity) {
+		if(collisionBullet(&(enemies[i]), &(bullets[j]))) {
+		    drawRect(enemies[i].row, enemies[i].col, enemies[i].height, enemies[i].width, BGCOLOR);
+		    enemies[i].velocity = 0;
+		    enemies[i].row = 0;
+		    num_active_enemies--;
 
 		    bullets[j].velocity = 0;
 		    num_bullets--;
@@ -315,7 +315,7 @@ void eraseOldObjects() {
     }
 
     /**** THIS SECTION ERASES OLD STUFF ****/
-    drawSpikes(spikes_old, TRUE);
+    drawEnemies(enemies_old, TRUE);
     drawBullets(bullets_old, TRUE);
     drawShip(&ship_old, TRUE);
 }
@@ -325,7 +325,7 @@ void drawNewObjects() {
     drawHorzLine(10, 0, 240, BLUE);
     drawShip(&ship, FALSE);
     drawBullets(bullets, FALSE);
-    drawSpikes(spikes, FALSE);
+    drawEnemies(enemies, FALSE);
 }
 
 void drawGameText() {
@@ -359,13 +359,13 @@ void updateOldVariables() {
 	bullets_old[i].velocity = bullets[i].velocity;
     }
 
-    for (i = 0; i < NUM_SPIKES; i++) {
-	spikes_old[i].col = spikes[i].col; 
-	spikes_old[i].row = spikes[i].row; 
-	spikes_old[i].height = spikes[i].height;
-	spikes_old[i].width = spikes[i].width;
-	spikes_old[i].velocity = spikes[i].velocity;
-	spikes_old[i].delay = spikes[i].delay;
+    for (i = 0; i < NUM_ENEMIES; i++) {
+	enemies_old[i].col = enemies[i].col; 
+	enemies_old[i].row = enemies[i].row; 
+	enemies_old[i].height = enemies[i].height;
+	enemies_old[i].width = enemies[i].width;
+	enemies_old[i].velocity = enemies[i].velocity;
+	enemies_old[i].delay = enemies[i].delay;
     }
 
     ship_old.row = ship.row;
@@ -387,12 +387,12 @@ void checkPauseButtons() {
 	state = GAME;
     }
     if(BUTTON_PRESSED(BUTTON_SELECT)) {
-	init(spikes, spikes_old, bullets, bullets_old, &ship, &ship_old);
+	init(enemies, enemies_old, bullets, bullets_old, &ship, &ship_old);
 	fillBackground(BLACK);
 	char pauseStr[] = "PAUSED";
 	drawString(76, 102, pauseStr, BLUE);
 	score = 0;
-	num_falling = 0;
+	num_active_enemies = 0;
 	num_bullets = 0;
     }
 }
@@ -404,20 +404,20 @@ void init() {
 
     int i = 0;
 
-    for (i = 0; i < NUM_SPIKES; i++) {
-	spikes[i].col = 20*i;
-	spikes[i].row = 0;
-	spikes[i].height = 10;
-	spikes[i].width = 20;
-	spikes[i].velocity = 0;
-	spikes[i].delay = 0;
+    for (i = 0; i < NUM_ENEMIES; i++) {
+	enemies[i].col = 20*i;
+	enemies[i].row = 0;
+	enemies[i].height = 10;
+	enemies[i].width = 20;
+	enemies[i].velocity = 0;
+	enemies[i].delay = 0;
 
-	spikes_old[i].col = spikes[i].col;
-	spikes_old[i].row = spikes[i].row;
-	spikes_old[i].height = spikes[i].height;
-	spikes_old[i].width = spikes[i].width;
-	spikes_old[i].velocity = spikes[i].velocity;
-	spikes_old[i].delay = spikes[i].delay;
+	enemies_old[i].col = enemies[i].col;
+	enemies_old[i].row = enemies[i].row;
+	enemies_old[i].height = enemies[i].height;
+	enemies_old[i].width = enemies[i].width;
+	enemies_old[i].velocity = enemies[i].velocity;
+	enemies_old[i].delay = enemies[i].delay;
     }
 
     ship.row = 120;
