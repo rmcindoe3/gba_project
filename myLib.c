@@ -15,32 +15,6 @@ void setPixel(int row, int col, u16 color) {
     VIDEO_BUFFER[OFFSET(row, col, SCREENWIDTH)] = color;
 }
 
-/** Draws a ship at (row, col).  ERASE is true when you want this method to 
-  erase the ship at the given location instead of draw a new one. */
-void drawShip(int row, int col, char ERASE) {
-    int i = 0;
-    if (!ERASE) {
-	int r;
-	for(r = 0; r < 20; r++)
-	    DMANow(3, &(ship_picture[r*20]), &VIDEO_BUFFER[OFFSET(row + r, col, SCREENWIDTH)], 20 |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
-    } else {
-	drawRect(row, col, 20, 20, CYAN);
-    }
-}
-
-/** Draws two triangular spikes in a 40 row by 20 col space
-  at the location (row, col) in the given color */
-void drawSpikes(int row, int col, u16 color) {
-    int i = 0;
-    if(color != CYAN) {
-	for(i = 0; i < 10; i++) {
-	    DMANow(3, &(spike_picture[i*20]), &VIDEO_BUFFER[OFFSET(row + i, col, SCREENWIDTH)], 20 |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
-	}
-    } else {
-	drawRect(row, col, 10, 20, CYAN);
-    }
-}
-
 
 /** Draws a horizontal line at (row, col) with given length and color */
 void drawHorzLine(int row, int col, int length, volatile unsigned short color) {
@@ -71,7 +45,7 @@ void waitForVblank() {
     while (SCANLINECOUNTER < 160);
 }
 
-extern const unsigned short bull_colors[6] = {
+const unsigned short bull_colors[6] = {
     COLOR(0, 0, 31),
     COLOR(0, 31, 31),
     COLOR(0, 31, 0),

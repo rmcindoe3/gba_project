@@ -94,13 +94,10 @@ typedef struct obj {
 } OBJECT;
 
 
-
 void setPixel(int, int, unsigned short);
 void waitForVblank();
-void drawSpikes(int row, int col, u16 color);
 void drawHorzLine(int row, int col, int length, volatile unsigned short color);
 void drawVertLine(int row, int col, int length, u16 color);
-void drawShip(int row, int col, char ERASE);
 void fillBackground(volatile unsigned short color);
 void DMANow(int channel, volatile void* source, void* destination, unsigned int control);
 void drawRect(int row, int col, int height, int width, volatile unsigned short color);
