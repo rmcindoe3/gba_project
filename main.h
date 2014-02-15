@@ -3,7 +3,7 @@
 #ifndef MAIN_H
 #define	MAIN_H
 
-#define NUM_ENEMIES 12
+#define NUM_ENEMIES 8
 #define MAX_BULLETS 5
 
 #define BGCOLOR CYAN
@@ -16,6 +16,10 @@
 #define GAME 0x01
 #define PAUSE 0x02
 
+//Velocity vars
+#define LEFT 0x01
+#define RIGHT 0x02
+
 //Struct that contains the relevant information for an SHIP
 typedef struct ship {
     char row;
@@ -23,16 +27,6 @@ typedef struct ship {
     char height;
     char width;
 } SHIP;
-
-//Struct that contains relevant information for ENEMY
-typedef struct enemy {
-    char row;
-    char col;
-    char height;
-    char width;
-    char velocity;
-    char delay;
-} ENEMY;
 
 //Struct that contains relevant information for BULLETs
 typedef struct bullet {
@@ -50,6 +44,11 @@ u16 num_active_enemies = 0;
 u16 num_bullets = 0;
 u16 autopilot = FALSE;
 u16 score = 0;
+
+unsigned int buttons;
+unsigned int oldButtons;
+
+char curr_enemy_velocity = LEFT;
 
 SHIP ship;
 ENEMY enemies[NUM_ENEMIES];

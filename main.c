@@ -1,10 +1,9 @@
 #include <stdlib.h>
 #include "myLib.h"
+#include "llist.h"
 #include "text.h"
 #include "main.h"
 
-unsigned int buttons;
-unsigned int oldButtons;
 
 int main() {
     int i = 0; //loop variable
@@ -166,13 +165,13 @@ void moveEnemies(ENEMY* obj) {
     int i = 0;
 
     //If there are less than 8 enemies currently falling, then drop one...
-    if(num_active_enemies < 8) {
+    if(get_size() < NUM_ENEMIES) {
 	//This rand() is to make sure the enemies don't all fall one after each other
 	if(!(rand()%20)) {
 	    int test = 1;			//loop conditional - stores whether or not we've found a enemy that's not already falling
 	    int ind = 0;			//stores the index of the enemy we're testing
 	    while(test) {
-		ind = rand()%12;							//randomly chose a lane to drop enemy in
+		ind = rand()%NUM_ENEMIES;							//randomly chose a lane to drop enemy in
 		if(!((&(obj[ind]))->velocity)) {		//If the object isn't moving, start moving it and get out of the loop
 		    (&(obj[ind]))->velocity = 1;
 		    test = 0;
@@ -403,6 +402,9 @@ void checkPauseButtons() {
 void init() {
 
     int i = 0;
+
+    empty_list();
+    create_list(NULL);
 
     for (i = 0; i < NUM_ENEMIES; i++) {
 	enemies[i].col = 20*i;
