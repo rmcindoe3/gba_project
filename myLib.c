@@ -79,7 +79,7 @@ const unsigned short ship_picture[20*20] = {
 
 
 const unsigned short enemy_picture[20*10] = {
-    RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, 
+    CYA, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, CYA, 
     CYA, RED, RED, RED, RED, RED, BLA, RED, RED, BLA, BLA, RED, RED, BLA, RED, RED, RED, RED, RED, CYA, 
     CYA, CYA, RED, RED, RED, RED, BLA, RED, RED, BLA, BLA, RED, RED, BLA, RED, RED, RED, RED, CYA, CYA, 
     CYA, CYA, CYA, RED, RED, RED, RED, RED, RED, BLA, BLA, RED, RED, RED, RED, RED, RED, CYA, CYA, CYA, 

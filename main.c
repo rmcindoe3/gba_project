@@ -1,12 +1,11 @@
 #include <stdlib.h>
 #include "myLib.h"
-#include "llist.h"
 #include "text.h"
+#include "llist.h"
 #include "main.h"
 
 
 int main() {
-    int i = 0; //loop variable
     REG_DISPCTL = 1027; //sets up the display in mode 3 with the settings we want
     fillBackground(BGCOLOR); //clears the screen in case anything else is present
 
@@ -67,21 +66,22 @@ void drawBullets(BULLET* bull, int erase) {
 /** drawEnemies ********************************************
  *
  *********************************************************/
-void drawEnemies(ENEMY* enemies, int erase) {
-    int i = 0;
-    if(erase) {
-	for(i = 0; i < NUM_ENEMIES; i++) {
-	    if(enemies[i].velocity && !enemies[i].delay) {
-		drawHorzLine(enemies[i].row, enemies[i].col, 20, BGCOLOR);
+void drawEnemies(int erase) {
+
+    struct llist* temp = get_head();
+
+    while(temp != NULL) {
+
+	if(erase) {
+	    if(temp->old_val->row != 40) {
+		drawHorzLine(temp->old_val->row, temp->old_val->col, 20, BGCOLOR);
 	    }
 	}
-    }
-    else {
-	for(i = 0; i < 10; i++) {
-	    if(enemies[i].velocity && !enemies[i].delay) {
-		drawEnemy(&(enemies[i]));
-	    }
+	else {
+	    drawEnemy(temp->val);
 	}
+
+	temp = temp->next;
     }
 }
 
@@ -112,34 +112,6 @@ void drawEnemy(ENEMY* enemy) {
     }
 }
 
-/** moveShip *********************************************
- * Autopilot algorithm.  Takes in our ship OBJECT and the
- *  array of enemy OBJECTs.  Basically determines if any 
- *  columns neighboring the ship have a enemy that is at
- *  a higher height on the screen than the ship's current
- *  column.  If it does, then move the ship to that column
- *********************************************************/
-void moveShip(SHIP* ship, ENEMY* enemies) {
-    int curr_lane = ship->col / 20;
-
-    //If a neighboring lane has a enemy with a higher location, switch to that lane
-    if(curr_lane == 0) {
-	if((&(enemies[curr_lane]))->row%140 > (&(enemies[curr_lane+1]))->row%140) {
-	    ship->col += 20;
-	}
-    } else if(curr_lane == 11) {
-	if((&(enemies[curr_lane]))->row%140 > (&(enemies[curr_lane-1]))->row%140) {
-	    ship->col -= 20;
-	}
-    } else {
-	if((&(enemies[curr_lane]))->row%140 > (&(enemies[curr_lane+1]))->row%140) {
-	    ship->col += 20;
-	} else if((&(enemies[curr_lane]))->row%140 > (&(enemies[curr_lane-1]))->row%140) {
-	    ship->col -= 20;
-	}
-    }
-}
-
 /** moveBullets ******************************************
  * Takes in an array of bullet OBJECTs and moves them.
  *********************************************************/
@@ -157,74 +129,19 @@ void moveBullets(BULLET* obj) {
     }
 }
 
-/** moveEnemies *******************************************
- * Takes in our array of enemy OBJECTs and moves all of
- *  them. 
- *********************************************************/
-void moveEnemies(ENEMY* obj) {
-    int i = 0;
-
-    //If there are less than 8 enemies currently falling, then drop one...
-    if(get_size() < NUM_ENEMIES) {
-	//This rand() is to make sure the enemies don't all fall one after each other
-	if(!(rand()%20)) {
-	    int test = 1;			//loop conditional - stores whether or not we've found a enemy that's not already falling
-	    int ind = 0;			//stores the index of the enemy we're testing
-	    while(test) {
-		ind = rand()%NUM_ENEMIES;							//randomly chose a lane to drop enemy in
-		if(!((&(obj[ind]))->velocity)) {		//If the object isn't moving, start moving it and get out of the loop
-		    (&(obj[ind]))->velocity = 1;
-		    test = 0;
-		}
-	    }
-	    num_active_enemies++;
-	}
-    }
-    for(i = 0; i < NUM_ENEMIES; i++) {
-	ENEMY* temp = (&(obj[i]));
-	if(temp->velocity) {				//If the enemy has a velocity...
-	    if(temp->row == 149) {		//If the enemy is one step away from the bottom we need to initialize the reset delay
-		temp->delay = 50;
-		temp->row += temp->velocity;
-	    } else if(temp->row == 150) {	//If the enemy is already at the bottom
-		if(temp->delay) {				//Wait the delay's length
-		    temp->delay--;
-		} else {							//Reset the enemy to the top
-		    drawEnemies(temp, TRUE);
-		    temp->row = 0;
-		    temp->velocity = 0;
-		    num_active_enemies--;
-		}
-	    } else temp->row += temp->velocity;		//For enemies not near the bottom...
-	}
-    }
-}
 
 /** collision ********************************************
  * Takes in two OBJECT's and sees if those two objects are
  *  overlapping.
  *********************************************************/
-char collisionShip(SHIP* ship, ENEMY* enemy) {
-    if((((enemy->col + enemy->width) > ship->col)) && (enemy->col < (ship->col + ship->width))) 
-	if((((enemy->row + enemy->height) > ship->row)) && (enemy->row < (ship->row + ship->height)))
-	    return 1;
-    return 0;
-}
-
-char collisionBullet(ENEMY* ship, BULLET* spike) {
-    if((((spike->col + spike->width) > ship->col)) && (spike->col < (ship->col + ship->width))) 
-	if((((spike->row + spike->height) > ship->row)) && (spike->row < (ship->row + ship->height)))
+char collision(ENEMY* enemy, BULLET* bullet) {
+    if((((bullet->col + bullet->width) > enemy->col)) && (bullet->col < (enemy->col + enemy->width))) 
+	if((((bullet->row + bullet->height) > enemy->row)) && (bullet->row < (enemy->row + enemy->height)))
 	    return 1;
     return 0;
 }
 
 void checkGameButtons() {
-    /**** THIS SECTION TOGGLES AUTO-PILOT MODE ****/
-    if(BUTTON_PRESSED(BUTTON_B)) {
-	autopilot ^= 1;
-	auto_pilot_change = 1;
-	ship.col -= ship.col%20;
-    }
 
     /**** THIS SECTION GENERATES THE BULLETS THAT ARE SHOT WITH A ****/
     if(BUTTON_PRESSED(BUTTON_A)) {
@@ -243,7 +160,7 @@ void checkGameButtons() {
     }
 
     if(BUTTON_PRESSED(BUTTON_SELECT)) {
-	init(enemies, enemies_old, bullets, bullets_old, &ship, &ship_old);
+	init();
 	fillBackground(BGCOLOR);
 	score = 0;
 	num_active_enemies = 0;
@@ -255,20 +172,18 @@ void checkGameButtons() {
 void moveGameObjects() {
 
     /**** THIS SECTION MOVES ALL THE PIECES  ****/
-    if(!autopilot) {
-	if(BUTTON_HELD(BUTTON_LEFT)) {
-	    if(ship.col) {
-		ship.col -= 5;
-	    }
+    if(BUTTON_HELD(BUTTON_LEFT)) {
+	if(ship.col) {
+	    ship.col -= 5;
 	}
-	if(BUTTON_HELD(BUTTON_RIGHT)) {
-	    if(ship.col < 220) {
-		ship.col += 5;
-	    }
+    }
+    if(BUTTON_HELD(BUTTON_RIGHT)) {
+	if(ship.col < 220) {
+	    ship.col += 5;
 	}
-    } else moveShip(&ship, enemies);
+    }
 
-    moveEnemies(enemies);
+    moveEnemies();
     moveBullets(bullets);
 
 }
@@ -276,8 +191,18 @@ void moveGameObjects() {
 void checkCollisions() {
 
     int i, j;
+    struct llist* temp = get_head();
+
+    while(temp != NULL) {
+
+	for(i = 0; i < MAX_BULLETS; i++) {
+	    
+	}
+
+	temp = temp->next;
+    }
     /**** THIS SECTION DETECTS ANY COLLISIONS BETWEEN MOVING OBJECTS ****/
-    for (i = 0; i < NUM_ENEMIES; i++) {
+    /*for (i = 0; i < NUM_ENEMIES; i++) {
 	if(collisionShip(&ship, &(enemies[i]))) {
 	    drawRect(enemies[i].row, enemies[i].col, enemies[i].height, enemies[i].width, BGCOLOR);
 	    enemies[i].velocity = 0;
@@ -302,40 +227,32 @@ void checkCollisions() {
 		}
 	    }
 	}
-    }
+    }*/
 }
 
 void eraseOldObjects() {
 
     //Clears the screen if the game was just unpaused.
     if(state_old == PAUSE) {
-	state_old = GAME;
 	fillBackground(BGCOLOR);
+	state_old = GAME;
     }
 
     /**** THIS SECTION ERASES OLD STUFF ****/
-    drawEnemies(enemies_old, TRUE);
+    drawEnemies(TRUE);
     drawBullets(bullets_old, TRUE);
     drawShip(&ship_old, TRUE);
 }
 
 void drawNewObjects() {
     /**** THIS SECTION DRAWS THE NEW LOCATIONS OF EVERYTHING ****/
-    drawHorzLine(10, 0, 240, BLUE);
     drawShip(&ship, FALSE);
     drawBullets(bullets, FALSE);
-    drawEnemies(enemies, FALSE);
+    drawEnemies(FALSE);
 }
 
 void drawGameText() {
     /**** THIS SECTION DRAWS THE TEXT TO THE SCREEN ****/
-    if(auto_pilot_change) {
-	auto_pilot_change = 0;
-	drawRect(150, 3+12*6, 8, 6*4, BGCOLOR);
-    }
-
-    if(autopilot)	drawString(150, 3, "Auto-Pilot: ON!", GREEN);
-    else drawString(150, 3, "Auto-Pilot: OFF", BLUE);
 
     if(score_change) {
 	score_change = 0;
@@ -358,13 +275,11 @@ void updateOldVariables() {
 	bullets_old[i].velocity = bullets[i].velocity;
     }
 
-    for (i = 0; i < NUM_ENEMIES; i++) {
-	enemies_old[i].col = enemies[i].col; 
-	enemies_old[i].row = enemies[i].row; 
-	enemies_old[i].height = enemies[i].height;
-	enemies_old[i].width = enemies[i].width;
-	enemies_old[i].velocity = enemies[i].velocity;
-	enemies_old[i].delay = enemies[i].delay;
+    struct llist* temp = get_head();
+
+    while(temp != NULL) {
+	updateOldEnemy(temp);
+	temp = temp->next;
     }
 
     ship_old.row = ship.row;
@@ -386,7 +301,7 @@ void checkPauseButtons() {
 	state = GAME;
     }
     if(BUTTON_PRESSED(BUTTON_SELECT)) {
-	init(enemies, enemies_old, bullets, bullets_old, &ship, &ship_old);
+	init();
 	fillBackground(BLACK);
 	char pauseStr[] = "PAUSED";
 	drawString(76, 102, pauseStr, BLUE);
@@ -405,22 +320,6 @@ void init() {
 
     empty_list();
     create_list(NULL);
-
-    for (i = 0; i < NUM_ENEMIES; i++) {
-	enemies[i].col = 20*i;
-	enemies[i].row = 0;
-	enemies[i].height = 10;
-	enemies[i].width = 20;
-	enemies[i].velocity = 0;
-	enemies[i].delay = 0;
-
-	enemies_old[i].col = enemies[i].col;
-	enemies_old[i].row = enemies[i].row;
-	enemies_old[i].height = enemies[i].height;
-	enemies_old[i].width = enemies[i].width;
-	enemies_old[i].velocity = enemies[i].velocity;
-	enemies_old[i].delay = enemies[i].delay;
-    }
 
     ship.row = 120;
     ship.col = 80;
