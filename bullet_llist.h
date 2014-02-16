@@ -7,6 +7,7 @@
 #include <stdbool.h>
 
 #define NUM_BULLETS 5
+#define MAX_ENEMY_BULLETS 8
 
 //Struct that contains relevant information for BULLET
 typedef struct bullet {
@@ -28,6 +29,10 @@ extern struct bullet_llist *bullet_head;
 extern struct bullet_llist *bullet_curr;
 extern int bullet_listSize;
 
+extern struct bullet_llist *e_bullet_head;
+extern struct bullet_llist *e_bullet_curr;
+extern int e_bullet_listSize;
+
 struct bullet_llist* create_bullet_list(int row, int col);
 struct bullet_llist* add_to_bullet_list(int row, int col, int add_to_end);
 struct bullet_llist* search_in_bullet_list(BULLET* val, struct bullet_llist **prev);
@@ -37,6 +42,17 @@ BULLET* get_bullet(int index);
 void empty_bullet_list(void);
 int delete_from_bullet_list(BULLET* val);
 int get_bullet_list_size(void);
+
+struct bullet_llist* e_create_bullet_list(int row, int col);
+struct bullet_llist* e_add_to_bullet_list(int row, int col, int add_to_end);
+struct bullet_llist* e_search_in_bullet_list(BULLET* val, struct bullet_llist **prev);
+struct bullet_llist* e_get_bullet_head(void);
+struct bullet_llist* e_get_bullet_tail(void);
+BULLET* e_get_bullet(int index);
+void e_empty_bullet_list(void);
+int e_delete_from_bullet_list(BULLET* val);
+int e_get_bullet_list_size(void);
+
 void moveBullets(void);
 void initBullet(BULLET* bullet, int row, int col);
 void updateOldBullet(struct bullet_llist* node);

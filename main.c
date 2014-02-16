@@ -6,6 +6,8 @@
 #include "main.h"
 
 char bullets_to_be_erased = 0;
+char e_bullets_to_be_erased = 0;
+char difficulty = 5;
 
 int main() {
     REG_DISPCTL = 1027; //sets up the display in mode 3 with the settings we want
@@ -23,6 +25,7 @@ int main() {
 
 	    checkGameButtons();
 	    moveGameObjects();
+	    enemiesFire();
 	    checkCollisions();
 
 	    waitForVblank();
@@ -64,6 +67,16 @@ void drawBullets(int erase) {
 
 	if(erase) drawRect(bullet_list->old_val->row, bullet_list->old_val->col, bullet_list->old_val->height, bullet_list->old_val->width, BGCOLOR);
 	else drawRect(bullet_list->val->row, bullet_list->val->col, bullet_list->val->height, bullet_list->val->width, bull_colors[clr%6]);
+
+	bullet_list = bullet_list->next;
+    }
+
+    bullet_list = e_get_bullet_head();
+
+    while(bullet_list != NULL) {
+
+	if(erase) drawRect(bullet_list->old_val->row, bullet_list->old_val->col, bullet_list->old_val->height, bullet_list->old_val->width, BGCOLOR);
+	else drawRect(bullet_list->val->row, bullet_list->val->col, bullet_list->val->height, bullet_list->val->width, RED);
 
 	bullet_list = bullet_list->next;
     }
@@ -172,6 +185,17 @@ void moveGameObjects() {
 
 }
 
+void enemiesFire() {
+    static int cnt = 0;
+    cnt++;
+    if(cnt > 10 && e_get_bullet_list_size() < MAX_ENEMY_BULLETS) {
+	if(rand()%(difficulty*e_get_bullet_list_size()) == 0) {
+	    ENEMY* temp = get_enemy(rand()%get_enemy_list_size());
+	    e_add_to_bullet_list(temp->row+10, temp->col+10, FALSE);
+	}
+    }
+}
+
 void checkCollisions() {
 
     /**** THIS SECTION DETECTS ANY COLLISIONS BETWEEN MOVING OBJECTS ****/
@@ -209,6 +233,11 @@ void eraseOldObjects() {
     if(bullets_to_be_erased != get_bullet_list_size()) {
 	drawRect(6,0,11,240,BGCOLOR);
 	bullets_to_be_erased = get_bullet_list_size();
+    }
+
+    if(e_bullets_to_be_erased != e_get_bullet_list_size()) {
+	drawRect(150,0,10,240,BGCOLOR);
+	e_bullets_to_be_erased = e_get_bullet_list_size();
     }
 
     //Clears the screen if the game was just unpaused.
@@ -259,6 +288,13 @@ void updateOldVariables() {
 	bullet_list = bullet_list->next;
     }
 
+    bullet_list = e_get_bullet_head();
+
+    while(bullet_list != NULL) {
+	updateOldBullet(bullet_list);
+	bullet_list = bullet_list->next;
+    }
+
     ship_old.row = ship.row;
     ship_old.col = ship.col;
     ship_old.height = ship_old.height;
@@ -295,6 +331,7 @@ void init() {
     create_enemy_list();
 
     empty_bullet_list();
+    e_empty_bullet_list();
 
     ship.row = 120;
     ship.col = 80;

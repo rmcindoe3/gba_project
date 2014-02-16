@@ -47,6 +47,7 @@ void init(void);
 
 void checkGameButtons(void);
 void moveGameObjects(void);
+void enemiesFire(void);
 
 void checkCollisions(void);
 void eraseOldObjects(void);
