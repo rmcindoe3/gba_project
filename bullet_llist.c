@@ -1,4 +1,4 @@
-#include "llist.h"
+#include "bullet_llist.h"
 
 struct llist *head = NULL;
 struct llist *curr = NULL;

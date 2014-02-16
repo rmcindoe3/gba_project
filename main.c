@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "myLib.h"
 #include "text.h"
-#include "llist.h"
+#include "enemy_llist.h"
 #include "main.h"
 
 
@@ -68,7 +68,7 @@ void drawBullets(BULLET* bull, int erase) {
  *********************************************************/
 void drawEnemies(int erase) {
 
-    struct llist* temp = get_head();
+    struct enemy_llist* temp = get_enemy_head();
 
     while(temp != NULL) {
 
@@ -188,8 +188,8 @@ void moveGameObjects() {
 
 void checkCollisions() {
 
-    int i, j;
-    struct llist* temp = get_head();
+    int i;
+    struct enemy_llist* temp = get_enemy_head();
 
     while(temp != NULL) {
 
@@ -198,7 +198,7 @@ void checkCollisions() {
 		if(collision(temp->val, &(bullets[i]))) {
 		    drawRect(temp->old_val->row, temp->old_val->col, temp->old_val->height, temp->old_val->width, BGCOLOR);
 
-		    delete_from_list(temp->val);
+		    delete_from_enemy_list(temp->val);
 
 		    bullets[i].velocity = 0;
 		    num_bullets--;
@@ -284,7 +284,7 @@ void updateOldVariables() {
 	bullets_old[i].velocity = bullets[i].velocity;
     }
 
-    struct llist* temp = get_head();
+    struct enemy_llist* temp = get_enemy_head();
 
     while(temp != NULL) {
 	updateOldEnemy(temp);
@@ -327,8 +327,8 @@ void init() {
 
     int i = 0;
 
-    empty_list();
-    create_list(NULL);
+    empty_enemy_list();
+    create_enemy_list(NULL);
 
     ship.row = 120;
     ship.col = 80;
