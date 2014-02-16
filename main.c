@@ -2,8 +2,10 @@
 #include "myLib.h"
 #include "text.h"
 #include "enemy_llist.h"
+#include "bullet_llist.h"
 #include "main.h"
 
+char bullets_to_be_erased = 0;
 
 int main() {
     REG_DISPCTL = 1027; //sets up the display in mode 3 with the settings we want
@@ -51,15 +53,19 @@ int main() {
  * Given an array of bullet OBJECTs, it will erase them
  *  from the screen.
  *********************************************************/
-void drawBullets(BULLET* bull, int erase) {
+void drawBullets(int erase) {
+
     static int clr = 0;
     if(!erase) clr++;
-    int i = 0;
-    for(i = 0; i < MAX_BULLETS; i++) {
-	if(bull[i].velocity != 0) {
-	    if(erase) drawRect(bull[i].row, bull[i].col, bull[i].height, bull[i].width, BGCOLOR);
-	    else drawRect(bull[i].row, bull[i].col, bull[i].height, bull[i].width, bull_colors[clr%6]);
-	}
+
+    struct bullet_llist* bullet_list = get_bullet_head();
+
+    while(bullet_list != NULL) {
+
+	if(erase) drawRect(bullet_list->old_val->row, bullet_list->old_val->col, bullet_list->old_val->height, bullet_list->old_val->width, BGCOLOR);
+	else drawRect(bullet_list->val->row, bullet_list->val->col, bullet_list->val->height, bullet_list->val->width, bull_colors[clr%6]);
+
+	bullet_list = bullet_list->next;
     }
 }
 
@@ -110,24 +116,6 @@ void drawEnemy(ENEMY* enemy) {
     }
 }
 
-/** moveBullets ******************************************
- * Takes in an array of bullet OBJECTs and moves them.
- *********************************************************/
-void moveBullets(BULLET* obj) {
-    int i = 0;
-    for(i = 0; i < MAX_BULLETS; i++) {
-	BULLET* temp = (&(obj[i]));
-	if(temp->velocity != 0) {
-	    temp->row += temp->velocity;
-	    if(temp->row <= 3) {
-		temp->velocity = 0;
-		num_bullets--;
-	    }
-	}
-    }
-}
-
-
 /** collision ********************************************
  * Takes in two OBJECT's and sees if those two objects are
  *  overlapping.
@@ -143,13 +131,8 @@ void checkGameButtons() {
 
     /**** THIS SECTION GENERATES THE BULLETS THAT ARE SHOT WITH A ****/
     if(BUTTON_PRESSED(BUTTON_A)) {
-	if(num_bullets < MAX_BULLETS) {
-	    num_bullets++;
-	    BULLET* temp = bullets;
-	    while(temp->velocity != 0) temp++;
-	    temp->row = ship.row - 5;
-	    temp->col = ship.col + 9;
-	    temp->velocity = -3;
+	if(get_bullet_list_size() < NUM_BULLETS) {
+	    add_to_bullet_list(ship.row, ship.col + ship.width/2, FALSE);
 	}
     }
 
@@ -161,10 +144,7 @@ void checkGameButtons() {
 	init();
 	fillBackground(BGCOLOR);
 	score = 0;
-	num_active_enemies = 0;
-	num_bullets = 0;
     }
-
 }
 
 void moveGameObjects() {
@@ -182,64 +162,45 @@ void moveGameObjects() {
     }
 
     moveEnemies();
-    moveBullets(bullets);
+    moveBullets();
 
 }
 
 void checkCollisions() {
 
-    int i;
-    struct enemy_llist* temp = get_enemy_head();
-
-    while(temp != NULL) {
-
-	for(i = 0; i < MAX_BULLETS; i++) {
-	    if(bullets[i].velocity != 0) {
-		if(collision(temp->val, &(bullets[i]))) {
-		    drawRect(temp->old_val->row, temp->old_val->col, temp->old_val->height, temp->old_val->width, BGCOLOR);
-
-		    delete_from_enemy_list(temp->val);
-
-		    bullets[i].velocity = 0;
-		    num_bullets--;
-
-		    score++;
-		    score_change = 1;
-		}
-	    }
-	}
-	temp = temp->next;
-    }
     /**** THIS SECTION DETECTS ANY COLLISIONS BETWEEN MOVING OBJECTS ****/
-    /*for (i = 0; i < NUM_ENEMIES; i++) {
-	if(collisionShip(&ship, &(enemies[i]))) {
-	    drawRect(enemies[i].row, enemies[i].col, enemies[i].height, enemies[i].width, BGCOLOR);
-	    enemies[i].velocity = 0;
-	    enemies[i].row = 0;
-	    num_active_enemies--;
-	    score = 0;
-	    score_change = 1;
-	}
-	for(j = 0; j < MAX_BULLETS; j++) {
-	    if(bullets[j].velocity != 0 && enemies[i].velocity) {
-		if(collisionBullet(&(enemies[i]), &(bullets[j]))) {
-		    drawRect(enemies[i].row, enemies[i].col, enemies[i].height, enemies[i].width, BGCOLOR);
-		    enemies[i].velocity = 0;
-		    enemies[i].row = 0;
-		    num_active_enemies--;
+    struct enemy_llist* enemy_list = get_enemy_head();
 
-		    bullets[j].velocity = 0;
-		    num_bullets--;
+    while(enemy_list != NULL) {
 
-		    score++;
-		    score_change = 1;
-		}
+	struct bullet_llist* bullet_list = get_bullet_head();
+
+	while(bullet_list != NULL) {
+
+	    if(collision(enemy_list->val, bullet_list->val)) {
+		drawRect(enemy_list->old_val->row, enemy_list->old_val->col, enemy_list->old_val->height, enemy_list->old_val->width, BGCOLOR);
+		drawRect(bullet_list->old_val->row, bullet_list->old_val->col, bullet_list->old_val->height, bullet_list->old_val->width, BGCOLOR);
+
+		delete_from_enemy_list(enemy_list->val);
+		delete_from_bullet_list(bullet_list->val);
+
+		score++;
+		score_change = 1;
 	    }
+
+	    bullet_list = bullet_list->next;
 	}
-    }*/
+
+	enemy_list = enemy_list->next;
+    }
 }
 
 void eraseOldObjects() {
+
+    if(bullets_to_be_erased != get_bullet_list_size()) {
+	drawRect(6,0,11,240,BGCOLOR);
+	bullets_to_be_erased = get_bullet_list_size();
+    }
 
     //Clears the screen if the game was just unpaused.
     if(state_old == PAUSE) {
@@ -249,14 +210,14 @@ void eraseOldObjects() {
 
     /**** THIS SECTION ERASES OLD STUFF ****/
     drawEnemies(TRUE);
-    drawBullets(bullets_old, TRUE);
+    drawBullets(TRUE);
     drawShip(&ship_old, TRUE);
 }
 
 void drawNewObjects() {
     /**** THIS SECTION DRAWS THE NEW LOCATIONS OF EVERYTHING ****/
     drawShip(&ship, FALSE);
-    drawBullets(bullets, FALSE);
+    drawBullets(FALSE);
     drawEnemies(FALSE);
 }
 
@@ -274,21 +235,19 @@ void drawGameText() {
 
 
 void updateOldVariables() {
-    int i;
-    //**** THIS SECTION UPDATES THE OLD VARIABLES ****/
-    for(i = 0; i < MAX_BULLETS; i++) {
-	bullets_old[i].row = bullets[i].row;
-	bullets_old[i].col = bullets[i].col;
-	bullets_old[i].height = bullets[i].height;
-	bullets_old[i].width = bullets[i].width;
-	bullets_old[i].velocity = bullets[i].velocity;
+
+    struct enemy_llist* enemy_list = get_enemy_head();
+
+    while(enemy_list != NULL) {
+	updateOldEnemy(enemy_list);
+	enemy_list = enemy_list->next;
     }
 
-    struct enemy_llist* temp = get_enemy_head();
+    struct bullet_llist* bullet_list = get_bullet_head();
 
-    while(temp != NULL) {
-	updateOldEnemy(temp);
-	temp = temp->next;
+    while(bullet_list != NULL) {
+	updateOldBullet(bullet_list);
+	bullet_list = bullet_list->next;
     }
 
     ship_old.row = ship.row;
@@ -315,8 +274,6 @@ void checkPauseButtons() {
 	char pauseStr[] = "PAUSED";
 	drawString(76, 102, pauseStr, BLUE);
 	score = 0;
-	num_active_enemies = 0;
-	num_bullets = 0;
     }
 }
 
@@ -325,10 +282,10 @@ void checkPauseButtons() {
  *********************************************************/
 void init() {
 
-    int i = 0;
-
     empty_enemy_list();
-    create_enemy_list(NULL);
+    create_enemy_list();
+
+    empty_bullet_list();
 
     ship.row = 120;
     ship.col = 80;
@@ -340,13 +297,4 @@ void init() {
     ship_old.height = ship.height;
     ship_old.width = ship.width;
 
-    for(i = 0; i < MAX_BULLETS; i++) {
-	bullets[i].height = 5;
-	bullets[i].width = 3;
-	bullets[i].velocity = 0;
-
-	bullets_old[i].height = bullets[i].height;
-	bullets_old[i].width = bullets[i].width;
-	bullets_old[i].velocity = bullets[i].velocity;
-    }
 }

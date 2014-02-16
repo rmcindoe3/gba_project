@@ -1,105 +1,105 @@
 #include "bullet_llist.h"
 
-struct llist *head = NULL;
-struct llist *curr = NULL;
-int listSize = 0;
+struct bullet_llist *bullet_head = NULL;
+struct bullet_llist *bullet_curr = NULL;
+int bullet_listSize = 0;
 
-struct llist* create_list()
+struct bullet_llist* create_bullet_list(int row, int col)
 {
-    struct llist *ptr = (struct llist*)malloc(sizeof(struct llist));
+    struct bullet_llist *ptr = (struct bullet_llist*)malloc(sizeof(struct bullet_llist));
     if(NULL == ptr)
     {
 	printf("\n Node creation failed \n");
 	return NULL;
     }
-    ptr->val = (ENEMY*)malloc(sizeof(ENEMY)); 
-    ptr->old_val = (ENEMY*)malloc(sizeof(ENEMY)); 
+    ptr->val = (BULLET*)malloc(sizeof(BULLET)); 
+    ptr->old_val = (BULLET*)malloc(sizeof(BULLET)); 
     ptr->next = NULL;
 
-    initEnemy(ptr->val);
-    updateOldEnemy(ptr);
+    initBullet(ptr->val, row, col);
+    updateOldBullet(ptr);
 
-    listSize++;
-    head = ptr;
-    curr = ptr;
+    bullet_listSize++;
+    bullet_head = ptr;
+    bullet_curr = ptr;
     return ptr;
 }
 
-void empty_list(void) {
+void empty_bullet_list(void) {
 
-    if(NULL == head) return;
+    if(NULL == bullet_head) return;
 
-    struct llist* ptr = head;
+    struct bullet_llist* ptr = bullet_head;
     while(ptr->next != NULL)
     {
-	delete_from_list(ptr->next->val);
+	delete_from_bullet_list(ptr->next->val);
     }
-    delete_from_list(ptr->val);
+    delete_from_bullet_list(ptr->val);
     return;
 }
 
-int get_size(void) {
-    return listSize;
+int get_bullet_list_size(void) {
+    return bullet_listSize;
 }
 
-ENEMY* get(int index) {
-    if(index < 0 || index >= listSize) {
+BULLET* get(int index) {
+    if(index < 0 || index >= bullet_listSize) {
 	return NULL;
     }
     int i;
-    struct llist* ptr = head;
+    struct bullet_llist* ptr = bullet_head;
     for(i = 0; i < index; i++) {
 	ptr = ptr->next;
     }
     return ptr->val;
 }
 
-struct llist* get_head(void) {
-    return head;
+struct bullet_llist* get_bullet_head(void) {
+    return bullet_head;
 }
 
-struct llist* get_tail(void) {
-    return curr;
+struct bullet_llist* get_bullet_tail(void) {
+    return bullet_curr;
 }
 
-struct llist* add_to_list(int add_to_end)
+struct bullet_llist* add_to_bullet_list(int row, int col, int add_to_end)
 {
-    if(NULL == head)
+    if(NULL == bullet_head)
     {
-	return (create_list());
+	return (create_bullet_list(row, col));
     }
 
-    struct llist *ptr = (struct llist*)malloc(sizeof(struct llist));
+    struct bullet_llist *ptr = (struct bullet_llist*)malloc(sizeof(struct bullet_llist));
     if(NULL == ptr)
     {
 	printf("\n Node creation failed \n");
 	return NULL;
     }
-    ptr->val = (ENEMY*)malloc(sizeof(ENEMY)); 
-    ptr->old_val = (ENEMY*)malloc(sizeof(ENEMY)); 
+    ptr->val = (BULLET*)malloc(sizeof(BULLET)); 
+    ptr->old_val = (BULLET*)malloc(sizeof(BULLET)); 
     ptr->next = NULL;
 
-    initEnemy(ptr->val);
-    updateOldEnemy(ptr);
+    initBullet(ptr->val, row, col);
+    updateOldBullet(ptr);
 
     if(add_to_end)
     {
-	curr->next = ptr;
-	curr = ptr;
+	bullet_curr->next = ptr;
+	bullet_curr = ptr;
     }
     else
     {
-	ptr->next = head;
-	head = ptr;
+	ptr->next = bullet_head;
+	bullet_head = ptr;
     }
-    listSize++;
+    bullet_listSize++;
     return ptr;
 }
 
-struct llist* search_in_list(ENEMY* val, struct llist **prev)
+struct bullet_llist* search_in_bullet_list(BULLET* val, struct bullet_llist **prev)
 {
-    struct llist *ptr = head;
-    struct llist *tmp = NULL;
+    struct bullet_llist *ptr = bullet_head;
+    struct bullet_llist *tmp = NULL;
     bool found = false;
 
 
@@ -129,12 +129,12 @@ struct llist* search_in_list(ENEMY* val, struct llist **prev)
     }
 }
 
-int delete_from_list(ENEMY* val)
+int delete_from_bullet_list(BULLET* val)
 {
-    struct llist *prev = NULL;
-    struct llist *del = NULL;
+    struct bullet_llist *prev = NULL;
+    struct bullet_llist *del = NULL;
 
-    del = search_in_list(val,&prev);
+    del = search_in_bullet_list(val,&prev);
     if(del == NULL)
     {
 	return -1;
@@ -144,13 +144,13 @@ int delete_from_list(ENEMY* val)
 	if(prev != NULL)
 	    prev->next = del->next;
 
-	if(del == curr)
+	if(del == bullet_curr)
 	{
-	    curr = prev;
+	    bullet_curr = prev;
 	}
-	if(del == head)
+	if(del == bullet_head)
 	{
-	    head = del->next;
+	    bullet_head = del->next;
 	}
     }
 
@@ -158,97 +158,53 @@ int delete_from_list(ENEMY* val)
     free(del->old_val);
     free(del);
     del = NULL;
-    listSize--;
+    bullet_listSize--;
 
     return 0;
 }
 
-/** moveEnemies *******************************************
- * Takes in our array of enemy OBJECTs and moves all of
+/** moveBullet *******************************************
+ * Takes in our array of bullet OBJECTs and moves all of
  *  them. 
  *********************************************************/
-void moveEnemies() {
+void moveBullets() {
 
-    static int add_enemy_cnt = 0;
-    //If there are less than 8 enemies currently falling, then drop one...
-    if(get_size() < NUM_ENEMIES) {
-	add_enemy_cnt++;
-	//This rand() is to make sure the enemies don't all fall one after each other
-	if(add_enemy_cnt == 20) {
-	    if(curr_velocity == LEFT) add_to_list(TRUE);
-	    else if(curr_velocity == RIGHT) add_to_list(FALSE);
-	    add_enemy_cnt = 0;
-	}
-    }
-
-    struct llist* temp = get_head();
-    if(get_head()->val->col == 20 && curr_velocity == LEFT)
-	curr_velocity = RIGHT;
-    if(get_tail()->val->col >= 200 && curr_velocity == RIGHT)
-	curr_velocity = LEFT;
+    struct bullet_llist* temp = get_bullet_head();
+    struct bullet_llist* del = NULL;
 
     while(temp != NULL) {
 
-	ENEMY* temp_enemy = temp->val;
-
-	//If the enemy isn't on row 40, move it down
-	if(temp_enemy->row != 30) {
-	    temp_enemy->row++;
-	}
-
-	//If we're turning the enemies, change their velocities
-	temp_enemy->velocity = curr_velocity;
-
 	//Move them according to velocity
-	temp_enemy->col += temp_enemy->velocity;
-	
-	//If our enemy isn't close to the next enemy, move it closer
-	if(temp->next != NULL) {
-	    if(curr_velocity == RIGHT) {
-		if(temp_enemy->col + 20 < temp->next->val->col) {
-		    temp_enemy->col++;
-		}
-	    }
-	    else {
-		if(temp_enemy->col + 20 < temp->next->val->col) {
-		    temp->next->val->col--;
-		}
-	    }
+	temp->val->row += temp->val->velocity;
+
+	if(temp->val->row <= 3) {
+	    del = temp; 
+	} else {
+	    del = NULL;
 	}
 
 	temp = temp->next;
+
+	if(del != NULL) {
+	    delete_from_bullet_list(del->val);
+	}
+
     }
 
 }
 
-void initEnemy(ENEMY* enemy) {
-
-    if(get_head() != NULL) {
-	if(curr_velocity == LEFT)
-	    enemy->col = get_tail()->val->col + 20;
-	else if(curr_velocity == RIGHT)
-	    enemy->col = get_head()->val->col - 20;
-
-	enemy->row = 0;
-	enemy->height = 10;
-	enemy->width = 20;
-	enemy->velocity = curr_velocity;
-    }
-    else {
-	curr_velocity = RIGHT;
-	enemy->row = 0;
-	enemy->col = 0;
-	enemy->height = 10;
-	enemy->width = 20;
-	enemy->velocity = curr_velocity;
-    }
+void initBullet(BULLET* bullet, int row, int col) {
+    bullet->col = col;
+    bullet->row = row;
+    bullet->height = 5;
+    bullet->width = 3;
+    bullet->velocity = -3;
 }
 
-void updateOldEnemy(struct llist* node) {
+void updateOldBullet(struct bullet_llist* node) {
     node->old_val->row = node->val->row;
     node->old_val->col = node->val->col;
     node->old_val->height = node->val->height;
     node->old_val->width = node->val->width;
     node->old_val->velocity = node->val->velocity;
-    node->old_val->delay = node->val->delay;
 }

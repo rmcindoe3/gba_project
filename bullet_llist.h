@@ -6,50 +6,39 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define NUM_ENEMIES 8
+#define NUM_BULLETS 5
 
-//Used for boolean expressions
-#define TRUE 0x01
-#define FALSE 0x00
-
-//Velocity vars
-#define LEFT -1
-#define RIGHT 1
-
-signed short curr_velocity;
-
-//Struct that contains relevant information for ENEMY
-typedef struct enemy {
+//Struct that contains relevant information for BULLET
+typedef struct bullet {
     char row;
     char col;
     char height;
     char width;
     signed short velocity;
-    char delay;
-} ENEMY;
+} BULLET;
 
-struct llist
+struct bullet_llist
 {
-    ENEMY* val;
-    ENEMY* old_val;
-    struct llist *next;
+    BULLET* val;
+    BULLET* old_val;
+    struct bullet_llist *next;
 };
 
-extern struct llist *head;
-extern struct llist *curr;
-extern int listSize;
+extern struct bullet_llist *bullet_head;
+extern struct bullet_llist *bullet_curr;
+extern int bullet_listSize;
 
-struct llist* create_list();
-struct llist* add_to_list(int add_to_end);
-struct llist* search_in_list(ENEMY* val, struct llist **prev);
-struct llist* get_head(void);
-struct llist* get_tail(void);
-ENEMY* get(int index);
-void empty_list(void);
-int delete_from_list(ENEMY* val);
-int get_size(void);
-void moveEnemies(void);
-void initEnemy(ENEMY* enemy);
-void updateOldEnemy(struct llist* node);
+struct bullet_llist* create_bullet_list(int row, int col);
+struct bullet_llist* add_to_bullet_list(int row, int col, int add_to_end);
+struct bullet_llist* search_in_bullet_list(BULLET* val, struct bullet_llist **prev);
+struct bullet_llist* get_bullet_head(void);
+struct bullet_llist* get_bullet_tail(void);
+BULLET* get_bullet(int index);
+void empty_bullet_list(void);
+int delete_from_bullet_list(BULLET* val);
+int get_bullet_list_size(void);
+void moveBullets(void);
+void initBullet(BULLET* bullet, int row, int col);
+void updateOldBullet(struct bullet_llist* node);
 
 #endif
