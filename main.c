@@ -73,9 +73,7 @@ void drawEnemies(int erase) {
     while(temp != NULL) {
 
 	if(erase) {
-	    if(temp->old_val->row != 40) {
-		drawHorzLine(temp->old_val->row, temp->old_val->col, 20, BGCOLOR);
-	    }
+	    drawRect(temp->old_val->row, temp->old_val->col, temp->old_val->height, temp->old_val->width, BGCOLOR);
 	}
 	else {
 	    drawEnemy(temp->val);
@@ -121,7 +119,7 @@ void moveBullets(BULLET* obj) {
 	BULLET* temp = (&(obj[i]));
 	if(temp->velocity != 0) {
 	    temp->row += temp->velocity;
-	    if(temp->row <= 10) {
+	    if(temp->row <= 3) {
 		temp->velocity = 0;
 		num_bullets--;
 	    }
@@ -196,9 +194,20 @@ void checkCollisions() {
     while(temp != NULL) {
 
 	for(i = 0; i < MAX_BULLETS; i++) {
-	    
-	}
+	    if(bullets[i].velocity != 0) {
+		if(collision(temp->val, &(bullets[i]))) {
+		    drawRect(temp->old_val->row, temp->old_val->col, temp->old_val->height, temp->old_val->width, BGCOLOR);
 
+		    delete_from_list(temp->val);
+
+		    bullets[i].velocity = 0;
+		    num_bullets--;
+
+		    score++;
+		    score_change = 1;
+		}
+	    }
+	}
 	temp = temp->next;
     }
     /**** THIS SECTION DETECTS ANY COLLISIONS BETWEEN MOVING OBJECTS ****/
