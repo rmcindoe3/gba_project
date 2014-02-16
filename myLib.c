@@ -104,7 +104,16 @@ const unsigned short enemy_half_health_picture[20*10] = {
     CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, BLA, RED, CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, 
 };
 
-
+const unsigned short health_bar[8*8] = {
+    CYA, CYA, CYA, RED, RED, CYA, CYA, CYA, 
+    CYA, CYA, RED, RED, RED, RED, CYA, CYA, 
+    CYA, RED, RED, GRE, GRE, RED, RED, CYA, 
+    RED, RED, GRE, GRE, GRE, GRE, RED, RED, 
+    RED, RED, GRE, GRE, GRE, GRE, RED, RED, 
+    CYA, RED, RED, GRE, GRE, RED, RED, CYA, 
+    CYA, CYA, RED, RED, RED, RED, CYA, CYA, 
+    CYA, CYA, CYA, RED, RED, CYA, CYA, CYA, 
+};
 
 
 

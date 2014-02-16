@@ -102,6 +102,7 @@ void pause(int);
 extern const unsigned short ship_picture[20*20];
 extern const unsigned short enemy_full_health_picture[20*10];
 extern const unsigned short enemy_half_health_picture[20*10];
+extern const unsigned short health_bar[8*8];
 extern const unsigned short bull_colors[6];
 
 #endif	/* MYLIB_H */

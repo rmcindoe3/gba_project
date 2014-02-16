@@ -16,6 +16,7 @@ typedef struct ship {
     char col;
     char height;
     char width;
+    char health;
 } SHIP;
 
 u16 state = GAME;
@@ -28,13 +29,15 @@ unsigned int buttons;
 unsigned int oldButtons;
 
 SHIP ship;
-
 SHIP ship_old;
 
-char scoreStr[20];			//char array to store string that will display score
+//char array to store string that will display score
+extern char scoreStr[20];
+extern char healthStr[20];
 
 //Variables used to minimize re-drawing text portions of the screen
 u16 score_change = 0;
+u16 health_change = 0;
 
 void drawBullets(int erase);
 void drawEnemies(int erase);
@@ -42,6 +45,7 @@ void drawShip(SHIP* ship, int erase);
 void drawEnemy(ENEMY* enemy);
 
 char collision(ENEMY* enemy, BULLET* bullet);
+char shipCollision(BULLET* bullet);
 
 void init(void);
 

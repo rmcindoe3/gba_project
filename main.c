@@ -8,6 +8,8 @@
 char bullets_to_be_erased = 0;
 char e_bullets_to_be_erased = 0;
 char difficulty = 5;
+char healthStr[] = "Health:";
+char scoreStr[] = "Score: 1234";
 
 int main() {
     REG_DISPCTL = 1027; //sets up the display in mode 3 with the settings we want
@@ -135,6 +137,17 @@ void drawEnemy(ENEMY* enemy) {
     }
 }
 
+/** drawHealth ********************************************
+ *
+ *********************************************************/
+void drawHealth(int row, int col) {
+    int i = 0;
+    for(i = 0; i < 8; i++) {
+	DMANow(3, &(health_bar[i*8]), &VIDEO_BUFFER[OFFSET(row + i, col, SCREENWIDTH)],
+		8 |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
+    }
+}
+
 /** collision ********************************************
  * Takes in two OBJECT's and sees if those two objects are
  *  overlapping.
@@ -142,6 +155,13 @@ void drawEnemy(ENEMY* enemy) {
 char collision(ENEMY* enemy, BULLET* bullet) {
     if((((bullet->col + bullet->width) > enemy->col)) && (bullet->col < (enemy->col + enemy->width))) 
 	if((((bullet->row + bullet->height) > enemy->row)) && (bullet->row < (enemy->row + enemy->height)))
+	    return 1;
+    return 0;
+}
+
+char shipCollision(BULLET* bullet) {
+    if((((bullet->col + bullet->width) > ship.col)) && (bullet->col < (ship.col + ship.width))) 
+	if((((bullet->row + bullet->height) > ship.row)) && (bullet->row < (ship.row + ship.height)))
 	    return 1;
     return 0;
 }
@@ -226,6 +246,27 @@ void checkCollisions() {
 
 	enemy_list = enemy_list->next;
     }
+
+    struct bullet_llist* bullet_list = e_get_bullet_head();
+
+    while(bullet_list != NULL) {
+
+	if(shipCollision(bullet_list->val)) {
+
+	    drawRect(bullet_list->old_val->row, bullet_list->old_val->col, bullet_list->old_val->height, bullet_list->old_val->width, BGCOLOR);
+	    e_delete_from_bullet_list(bullet_list->val);
+
+	    ship.health--;
+	    health_change = 1;
+	    if(!ship.health) {
+		init();
+		fillBackground(BGCOLOR);
+		score = 0;
+	    }
+	}
+
+	bullet_list =bullet_list->next;
+    }
 }
 
 void eraseOldObjects() {
@@ -236,7 +277,7 @@ void eraseOldObjects() {
     }
 
     if(e_bullets_to_be_erased != e_get_bullet_list_size()) {
-	drawRect(150,0,10,240,BGCOLOR);
+	drawRect(145,0,15,240,BGCOLOR);
 	e_bullets_to_be_erased = e_get_bullet_list_size();
     }
 
@@ -261,14 +302,26 @@ void drawNewObjects() {
 
 void drawGameText() {
     /**** THIS SECTION DRAWS THE TEXT TO THE SCREEN ****/
+    int i = 0;
 
     if(score_change) {
 	score_change = 0;
 	drawRect(150, 160, 8, 6*12, BGCOLOR);
     }
 
-    sprintf(scoreStr, "SCORE: %04d", score);
+    if(health_change) {
+	health_change = 0;
+	drawRect(150, 20, 8, 240, BGCOLOR);
+    }
+
+    sprintf(scoreStr, "Score: %04d", score);
     drawString(150, 160, scoreStr, BLUE);
+
+    drawString(150, 10, healthStr, BLUE);
+
+    for(i = 0; i < ship.health; i++) {
+	drawHealth(150, 55 + 10*i);
+    }
 }
 
 
@@ -337,6 +390,7 @@ void init() {
     ship.col = 80;
     ship.height = 20;
     ship.width = 20;
+    ship.health = 5;
 
     ship_old.row = ship.row;
     ship_old.col = ship.col;
