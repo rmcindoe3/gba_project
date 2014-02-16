@@ -204,8 +204,15 @@ void moveEnemies() {
 	
 	//If our enemy isn't close to the next enemy, move it closer
 	if(temp->next != NULL) {
-	    if(temp_enemy->col + 20 < temp->next->val->col) {
-		temp_enemy->col++;
+	    if(curr_velocity == RIGHT) {
+		if(temp_enemy->col + 20 < temp->next->val->col) {
+		    temp_enemy->col++;
+		}
+	    }
+	    else {
+		if(temp_enemy->col + 20 < temp->next->val->col) {
+		    temp->next->val->col--;
+		}
 	    }
 	}
 
