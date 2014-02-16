@@ -111,8 +111,14 @@ void drawShip(SHIP* ship, int erase) {
 void drawEnemy(ENEMY* enemy) {
     int i = 0;
     for(i = 0; i < 10; i++) {
-	DMANow(3, &(enemy_picture[i*20]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
-		20 |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
+	if(enemy->health > 5) {
+	    DMANow(3, &(enemy_full_health_picture[i*20]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
+		    20 |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
+	}
+	else {
+	    DMANow(3, &(enemy_half_health_picture[i*20]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
+		    20 |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
+	}
     }
 }
 
@@ -178,14 +184,17 @@ void checkCollisions() {
 	while(bullet_list != NULL) {
 
 	    if(collision(enemy_list->val, bullet_list->val)) {
-		drawRect(enemy_list->old_val->row, enemy_list->old_val->col, enemy_list->old_val->height, enemy_list->old_val->width, BGCOLOR);
-		drawRect(bullet_list->old_val->row, bullet_list->old_val->col, bullet_list->old_val->height, bullet_list->old_val->width, BGCOLOR);
 
-		delete_from_enemy_list(enemy_list->val);
+		drawRect(bullet_list->old_val->row, bullet_list->old_val->col, bullet_list->old_val->height, bullet_list->old_val->width, BGCOLOR);
 		delete_from_bullet_list(bullet_list->val);
 
-		score++;
-		score_change = 1;
+		if(--(enemy_list->val->health) == 0) {
+		    drawRect(enemy_list->old_val->row, enemy_list->old_val->col, enemy_list->old_val->height, enemy_list->old_val->width, BGCOLOR);
+		    delete_from_enemy_list(enemy_list->val);
+
+		    score++;
+		    score_change = 1;
+		}
 	    }
 
 	    bullet_list = bullet_list->next;

@@ -232,6 +232,7 @@ void initEnemy(ENEMY* enemy) {
 	enemy->row = 0;
 	enemy->height = 10;
 	enemy->width = 20;
+	enemy->health = 10;
 	enemy->velocity = curr_velocity;
     }
     else {
@@ -240,6 +241,7 @@ void initEnemy(ENEMY* enemy) {
 	enemy->col = 0;
 	enemy->height = 10;
 	enemy->width = 20;
+	enemy->health = 10;
 	enemy->velocity = curr_velocity;
     }
 }
@@ -251,4 +253,5 @@ void updateOldEnemy(struct enemy_llist* node) {
     node->old_val->width = node->val->width;
     node->old_val->velocity = node->val->velocity;
     node->old_val->delay = node->val->delay;
+    node->old_val->health = node->val->health;
 }

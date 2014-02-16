@@ -78,7 +78,7 @@ const unsigned short ship_picture[20*20] = {
 };
 
 
-const unsigned short enemy_picture[20*10] = {
+const unsigned short enemy_full_health_picture[20*10] = {
     CYA, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, RED, CYA, 
     CYA, RED, RED, RED, RED, RED, BLA, RED, RED, BLA, BLA, RED, RED, BLA, RED, RED, RED, RED, RED, CYA, 
     CYA, CYA, RED, RED, RED, RED, BLA, RED, RED, BLA, BLA, RED, RED, BLA, RED, RED, RED, RED, CYA, CYA, 
@@ -89,6 +89,19 @@ const unsigned short enemy_picture[20*10] = {
     CYA, CYA, CYA, BLA, CYA, CYA, CYA, RED, RED, RED, RED, RED, RED, CYA, CYA, CYA, BLA, CYA, CYA, CYA, 
     CYA, CYA, CYA, BLA, CYA, CYA, CYA, CYA, RED, RED, RED, RED, CYA, CYA, CYA, CYA, BLA, CYA, CYA, CYA, 
     CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, RED, RED, CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, 
+};
+
+const unsigned short enemy_half_health_picture[20*10] = {
+    CYA, RED, BLA, RED, BLA, RED, BLA, RED, BLA, RED, BLA, RED, BLA, RED, BLA, RED, BLA, RED, BLA, CYA, 
+    CYA, BLA, RED, BLA, RED, BLA, BLA, BLA, RED, BLA, BLA, BLA, RED, BLA, RED, BLA, RED, BLA, RED, CYA, 
+    CYA, CYA, BLA, RED, BLA, RED, BLA, RED, BLA, BLA, BLA, RED, BLA, BLA, BLA, RED, BLA, RED, CYA, CYA, 
+    CYA, CYA, CYA, BLA, RED, BLA, RED, BLA, RED, BLA, BLA, BLA, RED, BLA, RED, BLA, RED, CYA, CYA, CYA, 
+    CYA, CYA, CYA, BLA, BLA, RED, BLA, RED, BLA, BLA, BLA, RED, BLA, RED, BLA, RED, BLA, CYA, CYA, CYA, 
+    CYA, CYA, CYA, BLA, BLA, BLA, RED, BLA, RED, BLA, RED, BLA, RED, BLA, RED, BLA, BLA, CYA, CYA, CYA, 
+    CYA, CYA, CYA, BLA, BLA, CYA, BLA, RED, BLA, RED, BLA, RED, BLA, RED, CYA, BLA, BLA, CYA, CYA, CYA, 
+    CYA, CYA, CYA, BLA, CYA, CYA, CYA, BLA, RED, BLA, RED, BLA, RED, CYA, CYA, CYA, BLA, CYA, CYA, CYA, 
+    CYA, CYA, CYA, BLA, CYA, CYA, CYA, CYA, BLA, RED, BLA, RED, CYA, CYA, CYA, CYA, BLA, CYA, CYA, CYA, 
+    CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, BLA, RED, CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, 
 };
 
 
