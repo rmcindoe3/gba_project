@@ -1,10 +1,24 @@
 #include "enemy_llist.h"
+#include "myLib.h"
 
 struct enemy_llist *enemy_head = NULL;
 struct enemy_llist *enemy_curr = NULL;
 int enemy_listSize = 0;
 
-struct enemy_llist* create_enemy_list()
+unsigned char level_index = 0;
+
+signed short curr_velocity = RIGHT;
+
+char NORM = 0x01;
+char BOSS = 0x02;
+
+char level_one[21] = {
+    0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 
+    0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 
+    0x02
+};
+
+struct enemy_llist* create_enemy_list(char type)
 {
     struct enemy_llist *ptr = (struct enemy_llist*)malloc(sizeof(struct enemy_llist));
     if(NULL == ptr)
@@ -16,7 +30,7 @@ struct enemy_llist* create_enemy_list()
     ptr->old_val = (ENEMY*)malloc(sizeof(ENEMY)); 
     ptr->next = NULL;
 
-    initEnemy(ptr->val);
+    initEnemy(ptr->val, type);
     updateOldEnemy(ptr);
 
     enemy_listSize++;
@@ -62,11 +76,11 @@ struct enemy_llist* get_enemy_tail(void) {
     return enemy_curr;
 }
 
-struct enemy_llist* add_to_enemy_list(int add_to_end)
+struct enemy_llist* add_to_enemy_list(char type, int add_to_end)
 {
     if(NULL == enemy_head)
     {
-	return (create_enemy_list());
+	return (create_enemy_list(type));
     }
 
     struct enemy_llist *ptr = (struct enemy_llist*)malloc(sizeof(struct enemy_llist));
@@ -79,7 +93,7 @@ struct enemy_llist* add_to_enemy_list(int add_to_end)
     ptr->old_val = (ENEMY*)malloc(sizeof(ENEMY)); 
     ptr->next = NULL;
 
-    initEnemy(ptr->val);
+    initEnemy(ptr->val, type);
     updateOldEnemy(ptr);
 
     if(add_to_end)
@@ -175,17 +189,27 @@ void moveEnemies() {
 	add_enemy_cnt++;
 	//This rand() is to make sure the enemies don't all fall one after each other
 	if(add_enemy_cnt == 20) {
-	    if(curr_velocity == LEFT) add_to_enemy_list(TRUE);
-	    else if(curr_velocity == RIGHT) add_to_enemy_list(FALSE);
-	    add_enemy_cnt = 0;
+	    if(level_one[level_index] == BOSS) {
+		//TODO: wait for all other enemies to be dead.
+	    }
+	    else {
+		if(curr_velocity == LEFT) add_to_enemy_list(level_one[level_index], TRUE);
+		else if(curr_velocity == RIGHT) add_to_enemy_list(level_one[level_index], FALSE);
+		add_enemy_cnt = 0;
+		level_index++;
+	    }
 	}
     }
 
+
     struct enemy_llist* temp = get_enemy_head();
-    if(get_enemy_head()->val->col == 20 && curr_velocity == LEFT)
-	curr_velocity = RIGHT;
-    if(get_enemy_tail()->val->col >= 200 && curr_velocity == RIGHT)
-	curr_velocity = LEFT;
+
+    if(get_enemy_head() != NULL) {
+        if(get_enemy_head()->val->col == 20 && curr_velocity == LEFT)
+            curr_velocity = RIGHT;
+        if(get_enemy_tail()->val->col >= 200 && curr_velocity == RIGHT)
+            curr_velocity = LEFT;
+    }
 
     while(temp != NULL) {
 
@@ -221,7 +245,32 @@ void moveEnemies() {
 
 }
 
-void initEnemy(ENEMY* enemy) {
+/** printEnemy ****************************************************
+ * Prints values of the variables for this enemy to the screen.
+ * For testing purposes only.
+ ******************************************************************/
+void printEnemy(ENEMY* enemy) {
+
+    char temp[] = "velocity:    ";
+    
+    sprintf(temp, "row: %02d", enemy->row);
+    drawString(10, 10, temp, GREEN);
+    sprintf(temp, "col: %02d", enemy->col);
+    drawString(20, 10, temp, GREEN);
+    sprintf(temp, "height: %02d", enemy->height);
+    drawString(30, 10, temp, GREEN);
+    sprintf(temp, "width: %02d", enemy->width);
+    drawString(40, 10, temp, GREEN);
+    sprintf(temp, "velocity: %02d", enemy->velocity);
+    drawString(50, 10, temp, GREEN);
+    sprintf(temp, "type: %02d", enemy->type);
+    drawString(60, 10, temp, GREEN);
+    sprintf(temp, "health: %02d", enemy->health);
+    drawString(70, 10, temp, GREEN);
+
+}
+
+void initEnemy(ENEMY* enemy, char type) {
 
     if(get_enemy_head() != NULL) {
 	if(curr_velocity == LEFT)
@@ -232,8 +281,8 @@ void initEnemy(ENEMY* enemy) {
 	enemy->row = 0;
 	enemy->height = 10;
 	enemy->width = 20;
-	enemy->health = 10;
 	enemy->velocity = curr_velocity;
+	enemy->type = type;
     }
     else {
 	curr_velocity = RIGHT;
@@ -241,9 +290,14 @@ void initEnemy(ENEMY* enemy) {
 	enemy->col = 0;
 	enemy->height = 10;
 	enemy->width = 20;
-	enemy->health = 10;
 	enemy->velocity = curr_velocity;
+	enemy->type = type;
     }
+
+    if(type == NORM) {
+	enemy->health = 10;
+    }
+    
 }
 
 void updateOldEnemy(struct enemy_llist* node) {

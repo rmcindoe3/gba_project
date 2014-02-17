@@ -27,6 +27,7 @@ typedef struct enemy {
     signed short velocity;
     char delay;
     char health;
+    char type;
 } ENEMY;
 
 struct enemy_llist
@@ -40,8 +41,8 @@ extern struct enemy_llist *enemy_head;
 extern struct enemy_llist *enemy_curr;
 extern int enemy_listSize;
 
-struct enemy_llist* create_enemy_list();
-struct enemy_llist* add_to_enemy_list(int add_to_end);
+struct enemy_llist* create_enemy_list(char type);
+struct enemy_llist* add_to_enemy_list(char type, int add_to_end);
 struct enemy_llist* search_in_enemy_list(ENEMY* val, struct enemy_llist **prev);
 struct enemy_llist* get_enemy_head(void);
 struct enemy_llist* get_enemy_tail(void);
@@ -50,7 +51,7 @@ void empty_enemy_list(void);
 int delete_from_enemy_list(ENEMY* val);
 int get_enemy_list_size(void);
 void moveEnemies(void);
-void initEnemy(ENEMY* enemy);
+void initEnemy(ENEMY* enemy, char type);
 void updateOldEnemy(struct enemy_llist* node);
 
 #endif

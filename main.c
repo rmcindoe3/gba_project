@@ -274,8 +274,9 @@ void moveGameObjects() {
  * Will randomly shoot a bullet from a random enemy.
  ******************************************************************/
 void enemiesFire() {
-    //If the enemies haven't reached their max bullet count...
-    if(e_get_bullet_list_size() < 1000) {
+    //If the enemies haven't reached their max bullet count, and there 
+    //  are enemies on the screen right now
+    if(e_get_bullet_list_size() < 1000 && get_enemy_list_size()) {
 	
 	//Randomly generate a number based on difficulty and number
 	//  of enemies currently on the screen
@@ -491,7 +492,6 @@ void init() {
 
     //Empties the enemy list.
     empty_enemy_list();
-    create_enemy_list();
 
     //Empties our bullet lists.
     empty_bullet_list();
