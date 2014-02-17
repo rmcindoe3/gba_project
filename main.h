@@ -9,6 +9,7 @@
 #define GAME 0x01
 #define PAUSE 0x02
 
+#define MAX_DIFFICULTY 10
 
 //Struct that contains the relevant information for an SHIP
 typedef struct ship {
@@ -31,14 +32,11 @@ unsigned int oldButtons;
 SHIP ship;
 SHIP ship_old;
 
-//char array to store string that will display score
 extern char scoreStr[20];
 extern char healthStr[20];
 
-//Variables used to minimize re-drawing text portions of the screen
-u16 score_change = 0;
-u16 health_change = 0;
-
+/*** Full explanations of these functions ***
+ *** can be found in the main.c file.     ***/
 void drawBullets(int erase);
 void drawEnemies(int erase);
 void drawShip(SHIP* ship, int erase);
