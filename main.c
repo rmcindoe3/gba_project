@@ -168,17 +168,25 @@ void drawShip(SHIP* ship, int erase) {
  *********************************************************/
 void drawEnemy(ENEMY* enemy) {
     int i = 0;
-    for(i = 0; i < 10; i++) {
-	//If the enemy has more than 5 health, use the full health picture source array
-	if(enemy->health > 5) {
-	    DMANow(3, &(enemy_full_health_picture[i*20]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
-		    20 |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
-	}
-	//If the enemy has 5 or less health, use the half health picture source array
-	else {
-	    DMANow(3, &(enemy_half_health_picture[i*20]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
-		    20 |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
-	}
+    if(enemy->type == NORM) {
+        for(i = 0; i < enemy->height; i++) {
+            //If the enemy has more than 5 health, use the full health picture source array
+            if(enemy->health > 5) {
+                DMANow(3, &(enemy_full_health_picture[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
+                        enemy->width |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
+            }
+            //If the enemy has 5 or less health, use the half health picture source array
+            else {
+                DMANow(3, &(enemy_half_health_picture[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
+                        enemy->width |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
+            }
+        }
+    }
+    else if(enemy->type == BOSS) {
+        for(i = 0; i < enemy->height; i++) {
+            DMANow(3, &(boss_picture[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
+                    enemy->width |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
+        }
     }
 }
 

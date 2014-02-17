@@ -9,13 +9,10 @@ unsigned char level_index = 0;
 
 signed short curr_velocity = RIGHT;
 
-char NORM = 0x01;
-char BOSS = 0x02;
-
 char level_one[21] = {
-    0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 
-    0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 
-    0x02
+    NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, 
+    NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, 
+    BOSS
 };
 
 struct enemy_llist* create_enemy_list(char type)
@@ -184,14 +181,24 @@ int delete_from_enemy_list(ENEMY* val)
 void moveEnemies() {
 
     static int add_enemy_cnt = 0;
+
     //If there are less than 8 enemies currently falling, then drop one...
     if(get_enemy_list_size() < NUM_ENEMIES) {
-	add_enemy_cnt++;
+
+        //If the next enemy isn't a boss, start incrementing the count already.
+	if(level_one[level_index] != BOSS || !get_enemy_list_size()) add_enemy_cnt++;
+
 	//This rand() is to make sure the enemies don't all fall one after each other
-	if(add_enemy_cnt == 20) {
+	if(determineEnemySpawn(level_one[level_index], add_enemy_cnt)) {
+
+            //If the next enemy is a boss and there are no enemies on the screen...
 	    if(level_one[level_index] == BOSS) {
-		//TODO: wait for all other enemies to be dead.
+                if(get_enemy_list_size() == 0) {
+                    add_to_enemy_list(BOSS, TRUE);
+                    add_enemy_cnt = 0;
+                }
 	    }
+            //If the next enemy isn't a boss...
 	    else {
 		if(curr_velocity == LEFT) add_to_enemy_list(level_one[level_index], TRUE);
 		else if(curr_velocity == RIGHT) add_to_enemy_list(level_one[level_index], FALSE);
@@ -201,13 +208,12 @@ void moveEnemies() {
 	}
     }
 
-
     struct enemy_llist* temp = get_enemy_head();
 
     if(get_enemy_head() != NULL) {
         if(get_enemy_head()->val->col == 20 && curr_velocity == LEFT)
             curr_velocity = RIGHT;
-        if(get_enemy_tail()->val->col >= 200 && curr_velocity == RIGHT)
+        if(get_enemy_tail()->val->col >= (220-get_enemy_tail()->val->width) && curr_velocity == RIGHT)
             curr_velocity = LEFT;
     }
 
@@ -243,6 +249,21 @@ void moveEnemies() {
 	temp = temp->next;
     }
 
+}
+
+/** determineEnemySpawn ****************************************************
+ *
+ ******************************************************************/
+char determineEnemySpawn(char enemyType, int add_enemy_cnt) {
+    if(add_enemy_cnt >= 20) {
+        if(enemyType == BOSS && add_enemy_cnt >= 40) {
+            return TRUE;
+        }
+        else if(enemyType == NORM) {
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 /** printEnemy ****************************************************
@@ -283,6 +304,7 @@ void initEnemy(ENEMY* enemy, char type) {
 	enemy->width = 20;
 	enemy->velocity = curr_velocity;
 	enemy->type = type;
+	enemy->health = 10;
     }
     else {
 	curr_velocity = RIGHT;
@@ -292,10 +314,16 @@ void initEnemy(ENEMY* enemy, char type) {
 	enemy->width = 20;
 	enemy->velocity = curr_velocity;
 	enemy->type = type;
+	enemy->health = 10;
     }
 
     if(type == NORM) {
 	enemy->health = 10;
+    }
+    else if(type == BOSS) {
+        enemy->health = 20;
+	enemy->height = 20;
+	enemy->width = 40;
     }
     
 }
