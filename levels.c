@@ -8,35 +8,51 @@ char level_one_string[15] = "LEVEL ONE";
 char level_two_string[15] = "LEVEL TWO";
 char level_three_string[15] = "LEVEL THREE";
 char level_four_string[15] = "LEVEL FOUR";
+char level_five_string[15] = "LEVEL FIVE";
+char level_six_string[15] = "LEVEL SIX";
 
-char* levels[4] = {
+char* levels[NUM_LEVELS] = {
     level_one,
     level_two,
     level_three,
-    level_four
+    level_four,
+    level_five,
+    level_six
 };
 
 char level_one[21] = {
-    NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, 
-    NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, 
+    NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM,
+    NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM,
     BOSS
 };
 
 char level_two[21] = {
-    NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, 
-    BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, 
+    NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM,
+    BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG,
     BOSS
 };
 
 char level_three[21] = {
-    BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, 
-    BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, 
+    BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG,
+    BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG,
     BOSS
 };
 
 char level_four[21] = {
-    BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, 
-    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, 
+    BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG,
+    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
+    BOSS
+};
+
+char level_five[21] = {
+    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
+    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
+    BOSS
+};
+
+char level_six[21] = {
+    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
+    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
     BOSS
 };
 
@@ -70,6 +86,8 @@ char* getLevelString(void) {
     if(curr_level == 1) return level_two_string;
     if(curr_level == 2) return level_three_string;
     if(curr_level == 3) return level_four_string;
+    if(curr_level == 4) return level_five_string;
+    if(curr_level == 5) return level_six_string;
 }
 
 void reset_level() {
