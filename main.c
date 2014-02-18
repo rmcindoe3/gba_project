@@ -325,7 +325,7 @@ void enemiesFire() {
             chance = 50;
         }
         else if(enemy_list->val->type == TRIS) {
-            chance = 50;
+            chance = 150;
         }
         else if(enemy_list->val->type == BOSS) {
             chance = 10;
@@ -336,6 +336,11 @@ void enemiesFire() {
 
 	    //If the random chance happens, fire a bullet from it.
 	    e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, 0, FALSE);
+
+            if(enemy_list->val->type == TRIS) {
+                e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, 2, FALSE);
+                e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, -2, FALSE);
+            }
 
 	}
 
