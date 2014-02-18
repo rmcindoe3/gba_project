@@ -10,9 +10,6 @@
 //  hit something.
 char bullets_to_be_erased = 0;
 
-//Determines the rate at which enemies fire
-char difficulty = 1;
-
 //Strings that store text to be displayed on the screen
 char healthStr[] = "Health:";
 char scoreStr[] = "Score: 1234";
@@ -60,7 +57,7 @@ int main() {
 	    updateOldVariables();
 
 	    //Pauses for a bit before moving to the next frame
-	    pause(2);
+	    pause(1);
 
 	} //If the game is in the PAUSE state
 	else if(state == PAUSE) {
@@ -304,20 +301,33 @@ void moveGameObjects() {
  * Will randomly shoot a bullet from a random enemy.
  ******************************************************************/
 void enemiesFire() {
-    //If the enemies haven't reached their max bullet count, and there 
-    //  are enemies on the screen right now
-    if(e_get_bullet_list_size() < 1000 && get_enemy_list_size()) {
-	
-	//Randomly generate a number based on difficulty and number
-	//  of enemies currently on the screen
-	if(rand()%(15 - difficulty * get_enemy_list_size()) == 0) {
 
-	    //If the random chance happens, choose a random enemy
-	    //	and fire a bullet from it.
-	    ENEMY* temp = get_enemy(rand()%get_enemy_list_size());
-	    e_add_to_bullet_list(temp->row+10, temp->col+10, FALSE);
+    struct enemy_llist* enemy_list = get_enemy_head();
+
+    while(enemy_list != NULL) {
+
+        char chance;
+        if(enemy_list->val->type == NORM) {
+            chance = 100;
+        }
+        else if(enemy_list->val->type == BIGG) {
+            chance = 50;
+        }
+        else if(enemy_list->val->type == BOSS) {
+            chance = 10;
+        }
+
+	//Randomly generate a number based on enemy type
+	if((rand()%(chance)) == 0) {
+
+	    //If the random chance happens, fire a bullet from it.
+	    e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, FALSE);
+
 	}
+
+	enemy_list = enemy_list->next;
     }
+
 }
 
 /** checkCollisions ****************************************************

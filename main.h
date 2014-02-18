@@ -9,8 +9,6 @@
 #define GAME 0x01
 #define PAUSE 0x02
 
-#define MAX_DIFFICULTY 10
-
 //Struct that contains the relevant information for an SHIP
 typedef struct ship {
     char row;
