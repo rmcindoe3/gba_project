@@ -476,6 +476,8 @@ void drawGameText() {
 
     int i = 0;
 
+    static unsigned int clr = 0;
+
     //Clears the bottom bar of the screen.
     drawRect(145, 0, 15, 240, BGCOLOR);
 
@@ -492,7 +494,8 @@ void drawGameText() {
     }
 
     if(displayLevelString) {
-        drawString(80, 120 - 3*strlen(getLevelString()), getLevelString(), BLUE);
+        clr++;
+        drawString(80, 120 - 3*strlen(getLevelString()), getLevelString(), bull_colors[clr%6]);
         displayLevelString--;
         if(displayLevelString == 0) {
             drawRect(80,0,10,240,BGCOLOR);
