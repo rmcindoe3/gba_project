@@ -339,7 +339,7 @@ void enemiesFire() {
 	if((rand()%(chance)) == 0) {
 
 	    //If the random chance happens, fire a bullet from it.
-	    e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, FALSE);
+	    e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, 0, FALSE);
 
 	}
 

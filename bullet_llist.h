@@ -7,7 +7,6 @@
 #include <stdbool.h>
 
 #define NUM_BULLETS 5
-#define MAX_ENEMY_BULLETS 8
 
 //Struct that contains relevant information for BULLET
 typedef struct bullet {
@@ -15,7 +14,9 @@ typedef struct bullet {
     char col;
     char height;
     char width;
-    signed short velocity;
+    signed short vert_velocity;
+    signed short horz_velocity;
+    char horz_step;
 } BULLET;
 
 struct bullet_llist
@@ -43,8 +44,8 @@ void empty_bullet_list(void);
 int delete_from_bullet_list(BULLET* val);
 int get_bullet_list_size(void);
 
-struct bullet_llist* e_create_bullet_list(int row, int col);
-struct bullet_llist* e_add_to_bullet_list(int row, int col, int add_to_end);
+struct bullet_llist* e_create_bullet_list(int row, int col, signed short horz_velocity);
+struct bullet_llist* e_add_to_bullet_list(int row, int col, signed short horz_velocity, int add_to_end);
 struct bullet_llist* e_search_in_bullet_list(BULLET* val, struct bullet_llist **prev);
 struct bullet_llist* e_get_bullet_head(void);
 struct bullet_llist* e_get_bullet_tail(void);
@@ -55,7 +56,7 @@ int e_get_bullet_list_size(void);
 
 void moveBullets(void);
 void initBullet(BULLET* bullet, int row, int col);
-void e_initBullet(BULLET* bullet, int row, int col);
+void e_initBullet(BULLET* bullet, int row, int col, signed short horz_velocity);
 void updateOldBullet(struct bullet_llist* node);
 
 #endif
