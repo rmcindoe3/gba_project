@@ -198,6 +198,21 @@ void drawEnemy(ENEMY* enemy) {
             }
         }
     }
+    else if(enemy->type == TRIS) {
+
+        for(i = 0; i < enemy->height; i++) {
+            //If the enemy has more than 20 health, use the full health picture source array
+            if(enemy->health > 20) {
+                DMANow(3, &(tri_enemy_full_health_picture[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
+                        enemy->width |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
+            }
+            //If the enemy has 20 or less health, use the half health picture source array
+            else {
+                DMANow(3, &(tri_enemy_half_health_picture[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
+                        enemy->width |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
+            }
+        }
+    }
     else if(enemy->type == BOSS) {
         for(i = 0; i < enemy->height; i++) {
             DMANow(3, &(boss_picture[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
@@ -311,6 +326,9 @@ void enemiesFire() {
             chance = 100;
         }
         else if(enemy_list->val->type == BIGG) {
+            chance = 50;
+        }
+        else if(enemy_list->val->type == TRIS) {
             chance = 50;
         }
         else if(enemy_list->val->type == BOSS) {

@@ -255,10 +255,7 @@ char determineEnemySpawn(char enemyType, int add_enemy_cnt) {
         if(enemyType == BOSS && add_enemy_cnt >= 40) {
             return TRUE;
         }
-        else if(enemyType == NORM) {
-            return TRUE;
-        }
-        else if(enemyType == BIGG) {
+        else {
             return TRUE;
         }
     }
@@ -321,6 +318,9 @@ void initEnemy(ENEMY* enemy, char type) {
     }
     else if(type == BIGG) {
         enemy->health = 20;
+    }
+    else if(type == TRIS) {
+        enemy->health = 40;
     }
     else if(type == BOSS) {
         enemy->health = 40*(1+getCurrentLevel());
