@@ -357,12 +357,15 @@ void checkCollisions() {
     //Gets a pointer to the head of the enemies' list
     struct enemy_llist* enemy_list = get_enemy_head();
 
+    char del = 0;
+    struct enemy_llist* del_enemy = NULL;
+
     while(enemy_list != NULL) {
 
 	//Gets a pointer to the head of the bullets list
 	struct bullet_llist* bullet_list = get_bullet_head();
 
-	while(bullet_list != NULL) {
+	while(bullet_list != NULL && !del) {
 
 	    //Checks to see if a collision happened between these two objects
 	    if(collision(enemy_list->val, bullet_list->val)) {
@@ -370,18 +373,21 @@ void checkCollisions() {
 		//Erase and delete the bullet from our bullet list.
 		drawRect(bullet_list->old_val->row, bullet_list->old_val->col, bullet_list->old_val->height, bullet_list->old_val->width, BGCOLOR);
 		delete_from_bullet_list(bullet_list->val);
-
+                
 		//Decrement the enemies health.
 		//  If the enemy has 0 health after this, erase and delete it
-		if(--(enemy_list->val->health) == 0) {
+		if(--(enemy_list->val->health) <= 0) {
 
                     if(enemy_list->val->type == BOSS) {
                         advanceLevel();
                         displayLevelString = 100;
                     }
 
+                    //Erase the enemy.
 		    drawRect(enemy_list->old_val->row, enemy_list->old_val->col, enemy_list->old_val->height, enemy_list->old_val->width, BGCOLOR);
-		    delete_from_enemy_list(enemy_list->val);
+
+                    //Set delete variable so we know this enemy needs to be removed from the list.
+                    del = TRUE;
 
 		    //Also increment the score
 		    score++;
@@ -391,7 +397,20 @@ void checkCollisions() {
 	    bullet_list = bullet_list->next;
 	}
 
+        //If we want to delete this enemy because it died, set our temp variable
+        if(del) {
+            del_enemy = enemy_list;
+        }
+
+        //Move through the list
 	enemy_list = enemy_list->next;
+        
+        //Now go back and delete our dead enemy from the list.
+        if(del) {
+            delete_from_enemy_list(del_enemy->val);
+            del = FALSE;
+        }
+
     }
 
     //Gets a pointer to the head of the enemies' bullet list

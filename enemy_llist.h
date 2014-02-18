@@ -26,7 +26,7 @@ typedef struct enemy {
     char width;
     signed short velocity;
     char delay;
-    char health;
+    signed short health;
     char type;
 } ENEMY;
 

@@ -45,7 +45,14 @@ char getNextEnemyType(void) {
 }
 
 char pullNextEnemy(void) {
-    return levels[curr_level][level_index++];
+    //If the next enemy is a boss, don't increment the counter
+    //  for the level index because the level is complete.
+    if(levels[curr_level][level_index] == BOSS) {
+        return levels[curr_level][level_index];
+    }
+    else {
+        return levels[curr_level][level_index++];
+    }
 }
 
 unsigned char getCurrentLevel(void) {
