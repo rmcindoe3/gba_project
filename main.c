@@ -6,10 +6,6 @@
 #include "main.h"
 #include "levels.h"
 
-//Two variables that erase bullets that fly off the screen instead of 
-//  hit something.
-char bullets_to_be_erased = 0;
-
 //Strings that store text to be displayed on the screen
 char healthStr[] = "Health:";
 char scoreStr[] = "Score: 1234";
@@ -444,12 +440,6 @@ void checkCollisions() {
  * Erases the previous locations of game objects from the screen.
  ******************************************************************/
 void eraseOldObjects() {
-
-    //If there has been bullets leave the game, make sure to erase them.
-    if(bullets_to_be_erased != get_bullet_list_size()) {
-	drawRect(6,0,11,240,BGCOLOR);
-	bullets_to_be_erased = get_bullet_list_size();
-    }
 
     //Clears the screen if the game was just unpaused.
     if(state_old == PAUSE) {

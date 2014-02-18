@@ -1,4 +1,5 @@
 #include "bullet_llist.h"
+#include "myLib.h"
 
 struct bullet_llist *bullet_head = NULL;
 struct bullet_llist *bullet_curr = NULL;
@@ -350,6 +351,7 @@ void moveBullets() {
 	temp = temp->next;
 
 	if(del != NULL) {
+            drawRect(del->old_val->row, del->old_val->col, del->old_val->height, del->old_val->width, BGCOLOR);
 	    delete_from_bullet_list(del->val);
 	}
 
@@ -395,6 +397,7 @@ void moveBullets() {
 	temp = temp->next;
 
 	if(del != NULL) {
+            drawRect(del->old_val->row, del->old_val->col, del->old_val->height, del->old_val->width, BGCOLOR);
 	    e_delete_from_bullet_list(del->val);
 	}
 

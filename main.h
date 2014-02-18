@@ -3,8 +3,6 @@
 #ifndef MAIN_H
 #define	MAIN_H
 
-#define BGCOLOR CYAN
-
 //Game states
 #define GAME 0x01
 #define PAUSE 0x02
