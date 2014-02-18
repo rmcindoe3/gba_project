@@ -2,10 +2,12 @@
 #define LEVELS_H_INCLUDED
 
 #define NUM_LEVELS 4
+#define STARTING_LEVEL 0
 
 #define NORM 0x01
 #define BOSS 0x02
 #define BIGG 0x03
+#define TRIS 0x04
 
 extern unsigned char level_index;
 extern unsigned char curr_level;

@@ -2,7 +2,7 @@
 
 unsigned char level_index = 0;
 
-unsigned char curr_level = 0;
+unsigned char curr_level = STARTING_LEVEL;
 
 char level_one_string[15] = "LEVEL ONE";
 char level_two_string[15] = "LEVEL TWO";
@@ -35,8 +35,8 @@ char level_three[21] = {
 };
 
 char level_four[21] = {
-    NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, 
-    NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, 
+    BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, 
+    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, 
     BOSS
 };
 
@@ -67,7 +67,7 @@ char* getLevelString(void) {
 
 void reset_level() {
     level_index = 0;
-    curr_level = 0;
+    curr_level = STARTING_LEVEL;
 }
 
 
