@@ -16,9 +16,6 @@
 #define LEFT -1
 #define RIGHT 1
 
-#define NORM 0x01
-#define BOSS 0x02
-
 signed short curr_velocity;
 
 //Struct that contains relevant information for ENEMY
@@ -53,10 +50,11 @@ ENEMY* get_enemy(int index);
 void empty_enemy_list(void);
 int delete_from_enemy_list(ENEMY* val);
 int get_enemy_list_size(void);
+
 void moveEnemies(void);
 void initEnemy(ENEMY* enemy, char type);
 void updateOldEnemy(struct enemy_llist* node);
 char determineEnemySpawn(char enemyType, int add_enemy_cnt);
-void reset_level(void);
+void addEnemies(void);
 
 #endif

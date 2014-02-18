@@ -21,7 +21,7 @@
 # PRODUCT_NAME should match your Linker Output in NetBeans
 # SOURCES should be The .c files in your project (except in the autograder)
 PRODUCT_NAME       = cs2261
-SOURCES            = main.c myLib.c text.c enemy_llist.c bullet_llist.c
+SOURCES            = main.c myLib.c text.c enemy_llist.c bullet_llist.c levels.c
 
 # --- System Settings (Update these for your system)
 # DKPATH should contain arm-eabi-gcc{.exe}

@@ -1,19 +1,13 @@
 #include "enemy_llist.h"
 #include "myLib.h"
+#include "levels.h"
+#include "text.h"
 
 struct enemy_llist *enemy_head = NULL;
 struct enemy_llist *enemy_curr = NULL;
 int enemy_listSize = 0;
 
-unsigned char level_index = 0;
-
 signed short curr_velocity = RIGHT;
-
-char level_one[21] = {
-    NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, 
-    NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, 
-    BOSS
-};
 
 struct enemy_llist* create_enemy_list(char type)
 {
@@ -181,24 +175,24 @@ void addEnemies() {
     //If there are less than 8 enemies currently falling, then drop one...
     if(get_enemy_list_size() < NUM_ENEMIES) {
 
-        //If the next enemy isn't a boss, start incrementing the count already.
-	if(level_one[level_index] != BOSS || !get_enemy_list_size()) add_enemy_cnt++;
+        //If the next enemy isn't a boss or the enemy is is empty, 
+        //  start incrementing the count.
+	if(getNextEnemyType() != BOSS || !get_enemy_list_size()) add_enemy_cnt++;
 
-	if(determineEnemySpawn(level_one[level_index], add_enemy_cnt)) {
+	if(determineEnemySpawn(getNextEnemyType(), add_enemy_cnt)) {
 
             //If the next enemy is a boss and there are no enemies on the screen...
-	    if(level_one[level_index] == BOSS) {
+	    if(getNextEnemyType() == BOSS) {
                 if(get_enemy_list_size() == 0) {
-                    add_to_enemy_list(BOSS, TRUE);
+                    add_to_enemy_list(pullNextEnemy(), TRUE);
                     add_enemy_cnt = 0;
                 }
 	    }
             //If the next enemy isn't a boss...
 	    else {
-		if(curr_velocity == LEFT) add_to_enemy_list(level_one[level_index], TRUE);
-		else if(curr_velocity == RIGHT) add_to_enemy_list(level_one[level_index], FALSE);
+		if(curr_velocity == LEFT) add_to_enemy_list(pullNextEnemy(), TRUE);
+		else if(curr_velocity == RIGHT) add_to_enemy_list(pullNextEnemy(), FALSE);
 		add_enemy_cnt = 0;
-		level_index++;
 	    }
 	}
     }
@@ -328,10 +322,6 @@ void initEnemy(ENEMY* enemy, char type) {
 	enemy->width = 40;
     }
     
-}
-
-void reset_level() {
-    level_index = 0;
 }
 
 void updateOldEnemy(struct enemy_llist* node) {

@@ -4,6 +4,7 @@
 #include "enemy_llist.h"
 #include "bullet_llist.h"
 #include "main.h"
+#include "levels.h"
 
 //Two variables that erase bullets that fly off the screen instead of 
 //  hit something.
@@ -15,6 +16,9 @@ char difficulty = 1;
 //Strings that store text to be displayed on the screen
 char healthStr[] = "Health:";
 char scoreStr[] = "Score: 1234";
+
+//Determines whether or not we display the level string on screen
+char displayLevelString = 100;
 
 //Main function of program.
 int main() {
@@ -422,6 +426,14 @@ void drawGameText() {
     //Draw a health bar picture per health the user has.
     for(i = 0; i < ship.health; i++) {
 	drawHealth(150, 55 + 10*i);
+    }
+
+    if(displayLevelString) {
+        drawString(80, 120 - 3*strlen(getLevelString()), getLevelString(), BLUE);
+        displayLevelString--;
+        if(displayLevelString == 0) {
+            drawRect(80,0,10,240,BGCOLOR);
+        }
     }
 }
 

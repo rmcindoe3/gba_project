@@ -55,6 +55,7 @@ int e_get_bullet_list_size(void);
 
 void moveBullets(void);
 void initBullet(BULLET* bullet, int row, int col);
+void e_initBullet(BULLET* bullet, int row, int col);
 void updateOldBullet(struct bullet_llist* node);
 
 #endif
