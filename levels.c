@@ -2,7 +2,7 @@
 
 unsigned char level_index = 0;
 
-unsigned char curr_level = 1;
+unsigned char curr_level = 0;
 
 char level_one_string[15] = "LEVEL ONE";
 char level_two_string[15] = "LEVEL TWO";
@@ -41,11 +41,11 @@ char level_four[21] = {
 };
 
 char getNextEnemyType(void) {
-    return levels[curr_level-1][level_index];
+    return levels[curr_level][level_index];
 }
 
 char pullNextEnemy(void) {
-    return levels[curr_level-1][level_index++];
+    return levels[curr_level][level_index++];
 }
 
 unsigned char getCurrentLevel(void) {
@@ -59,15 +59,15 @@ void advanceLevel(void) {
 }
 
 char* getLevelString(void) {
-    if(curr_level == 1) return level_one_string;
-    if(curr_level == 2) return level_two_string;
-    if(curr_level == 3) return level_three_string;
-    if(curr_level == 4) return level_four_string;
+    if(curr_level == 0) return level_one_string;
+    if(curr_level == 1) return level_two_string;
+    if(curr_level == 2) return level_three_string;
+    if(curr_level == 3) return level_four_string;
 }
 
 void reset_level() {
     level_index = 0;
-    curr_level = 1;
+    curr_level = 0;
 }
 
 

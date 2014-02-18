@@ -323,7 +323,7 @@ void initEnemy(ENEMY* enemy, char type) {
         enemy->health = 20;
     }
     else if(type == BOSS) {
-        enemy->health = 40*getCurrentLevel();
+        enemy->health = 40*(1+getCurrentLevel());
 	enemy->height = 20;
 	enemy->width = 40;
     }
