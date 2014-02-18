@@ -7,7 +7,7 @@
 #define GAME 0x01
 #define PAUSE 0x02
 
-//Struct that contains the relevant information for an SHIP
+//Struct that contains the relevant information for our SHIP
 typedef struct ship {
     char row;
     char col;
@@ -16,18 +16,22 @@ typedef struct ship {
     char health;
 } SHIP;
 
+//Variables that store what state the game is in.
 u16 state = GAME;
 u16 state_old = GAME;
 
-u16 num_active_enemies = 0;
+//Keeps track of how many points the user has.
 u16 score = 0;
 
+//Keeps track of user input.
 unsigned int buttons;
 unsigned int oldButtons;
 
+//Our ship structs that represent the user.
 SHIP ship;
 SHIP ship_old;
 
+//Strings used to display text information on the screen.
 extern char scoreStr[20];
 extern char healthStr[20];
 

@@ -4,11 +4,13 @@
 #define NUM_LEVELS 6
 #define STARTING_LEVEL 0
 
+//The different types of enemies in the game.
 #define NORM 0x01
 #define BOSS 0x02
 #define BIGG 0x03
 #define TRIS 0x04
 
+//These are all documented in levels.c
 extern unsigned char level_index;
 extern unsigned char curr_level;
 extern char* levels[NUM_LEVELS];
@@ -19,6 +21,7 @@ extern char level_four[21];
 extern char level_five[21];
 extern char level_six[21];
 
+//These are all documented in levels.c
 void reset_level(void);
 char getNextEnemyType(void);
 char pullNextEnemy(void);

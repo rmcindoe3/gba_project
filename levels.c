@@ -1,9 +1,12 @@
 #include "levels.h"
 
+//Keeps track of where we are in the level.
 unsigned char level_index = 0;
 
+//Sets the current level to the starting level.
 unsigned char curr_level = STARTING_LEVEL;
 
+//Strings used when displaying what level we're on in the game.
 char level_one_string[15] = "LEVEL ONE";
 char level_two_string[15] = "LEVEL TWO";
 char level_three_string[15] = "LEVEL THREE";
@@ -11,6 +14,7 @@ char level_four_string[15] = "LEVEL FOUR";
 char level_five_string[15] = "LEVEL FIVE";
 char level_six_string[15] = "LEVEL SIX";
 
+//Array of our levels.
 char* levels[NUM_LEVELS] = {
     level_one,
     level_two,
@@ -20,47 +24,61 @@ char* levels[NUM_LEVELS] = {
     level_six
 };
 
+//Level one enemy order.
 char level_one[21] = {
     NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM,
     NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM,
     BOSS
 };
 
+//Level two enemy order.
 char level_two[21] = {
     NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM,
     BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG,
     BOSS
 };
 
+//Level three enemy order.
 char level_three[21] = {
     BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG,
     BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG,
     BOSS
 };
 
+//Level four enemy order.
 char level_four[21] = {
     BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG,
     TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
     BOSS
 };
 
+//Level five enemy order.
 char level_five[21] = {
     TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
     TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
     BOSS
 };
 
+//Level six enemy order.
 char level_six[21] = {
     TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
     TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
     BOSS
 };
 
+/** getNextEnemyType *****************************************************
+ * Returns the next enemy type for our current level.
+ *************************************************************/
 char getNextEnemyType(void) {
     return levels[curr_level][level_index];
 }
 
+/** pullNextEnemy *****************************************************
+ * Returns the next enemy type for our current level and 
+ *  then advances forward in the level.
+ *************************************************************/
 char pullNextEnemy(void) {
+
     //If the next enemy is a boss, don't increment the counter
     //  for the level index because the level is complete.
     if(levels[curr_level][level_index] == BOSS) {
@@ -71,16 +89,31 @@ char pullNextEnemy(void) {
     }
 }
 
+/** getCurrentLevel *****************************************************
+ * Returns which level we are currently on.
+ *************************************************************/
 unsigned char getCurrentLevel(void) {
     return curr_level;
 }
 
+/** advanceLevel *****************************************************
+ * Moves the game foward a level.
+ *************************************************************/
 void advanceLevel(void) {
+
+    //Increments our current level.
     curr_level++;
+
+    //If we've gone past the final level, start over.
     curr_level %= NUM_LEVELS;
+
+    //Make sure we reset the level index back to the beginning.
     level_index = 0;
 }
 
+/** getLevelString *****************************************************
+ * Returns a string that shows which level we're currently on.
+ *************************************************************/
 char* getLevelString(void) {
     if(curr_level == 0) return level_one_string;
     if(curr_level == 1) return level_two_string;
@@ -90,6 +123,9 @@ char* getLevelString(void) {
     if(curr_level == 5) return level_six_string;
 }
 
+/** reset_level *****************************************************
+ * Resets the game when the user loses or presses select.
+ *************************************************************/
 void reset_level() {
     level_index = 0;
     curr_level = STARTING_LEVEL;

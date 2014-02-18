@@ -99,8 +99,10 @@ void pause(int);
 #define BLA 0
 #define WHI COLOR(31, 31, 31)
 
+//The background color of our game.
 #define BGCOLOR CYAN
 
+//Byte arrays that represent our object's picture.
 extern const unsigned short ship_picture[20*20];
 extern const unsigned short boss_picture[40*20];
 extern const unsigned short enemy_full_health_picture[20*10];

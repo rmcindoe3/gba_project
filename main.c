@@ -164,7 +164,10 @@ void drawShip(SHIP* ship, int erase) {
  *  - ENEMY* enemy - a pointer to the enemy we want to draw
  *********************************************************/
 void drawEnemy(ENEMY* enemy) {
+
     int i = 0;
+
+    //Determine which type of enemy we're drawing, and select the appropriate picture.
     if(enemy->type == NORM) {
         for(i = 0; i < enemy->height; i++) {
             //If the enemy has more than 5 health, use the full health picture source array
@@ -317,6 +320,8 @@ void enemiesFire() {
 
     while(enemy_list != NULL) {
 
+        //Set up a chance variable based on what type of enemy we have.
+        //  (1/chance) is the probability that a bullet will be shot.
         char chance;
         if(enemy_list->val->type == NORM) {
             chance = 100;
@@ -331,12 +336,13 @@ void enemiesFire() {
             chance = 10;
         }
 
-	//Randomly generate a number based on enemy type
+	//Randomly generate a number and test to see if we want to shoot a bullet.
 	if((rand()%(chance)) == 0) {
 
-	    //If the random chance happens, fire a bullet from it.
+	    //If the random chance happens, fire a bullet from the enemy.
 	    e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, 0, FALSE);
 
+            //If we have a tri enemy type, then shoot two additional bullets with 2 and -2 horizontal velocity.
             if(enemy_list->val->type == TRIS) {
                 e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, 2, FALSE);
                 e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, -2, FALSE);
@@ -358,6 +364,7 @@ void checkCollisions() {
     //Gets a pointer to the head of the enemies' list
     struct enemy_llist* enemy_list = get_enemy_head();
 
+    //Temporary variables used to keep track of enemy deletions.
     char del = 0;
     struct enemy_llist* del_enemy = NULL;
 
@@ -366,19 +373,23 @@ void checkCollisions() {
 	//Gets a pointer to the head of the bullets list
 	struct bullet_llist* bullet_list = get_bullet_head();
 
+        //del is set when an enemy is killed.  When that happens we don't
+        //  want to keep iterating through bullets, so we break out of the loop.
 	while(bullet_list != NULL && !del) {
 
-	    //Checks to see if a collision happened between these two objects
+	    //Checks to see if a collision happened between the bullet and enemy.
 	    if(collision(enemy_list->val, bullet_list->val)) {
 
 		//Erase and delete the bullet from our bullet list.
 		drawRect(bullet_list->old_val->row, bullet_list->old_val->col, bullet_list->old_val->height, bullet_list->old_val->width, BGCOLOR);
 		delete_from_bullet_list(bullet_list->val);
-                
+
 		//Decrement the enemies health.
 		//  If the enemy has 0 health after this, erase and delete it
 		if(--(enemy_list->val->health) <= 0) {
 
+                    //If the enemy is a boss, then move forward a level and
+                    //  set the counter that displays the level string.
                     if(enemy_list->val->type == BOSS) {
                         advanceLevel();
                         displayLevelString = 100;
@@ -476,6 +487,7 @@ void drawGameText() {
 
     int i = 0;
 
+    //Variable used for flashing colors of the level strings.
     static unsigned int clr = 0;
 
     //Clears the bottom bar of the screen.
@@ -493,10 +505,20 @@ void drawGameText() {
 	drawHealth(150, 55 + 10*i);
     }
 
+    //displayLevelString is a counter for how many loop times we want
+    //  to display what level the game is in.
     if(displayLevelString) {
+
+        //Change which color we're going to use
         clr++;
+
+        //Draw the string
         drawString(80, 120 - 3*strlen(getLevelString()), getLevelString(), bull_colors[clr%6]);
+
+        //Decrement the count.
         displayLevelString--;
+
+        //If the count just reached zero, erase the level string message.
         if(displayLevelString == 0) {
             drawRect(80,0,10,240,BGCOLOR);
         }
@@ -603,5 +625,4 @@ void init() {
     ship_old.width = ship.width;
 
     displayLevelString = 100;
-
 }
