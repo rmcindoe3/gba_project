@@ -103,6 +103,8 @@ extern const unsigned short ship_picture[20*20];
 extern const unsigned short boss_picture[40*20];
 extern const unsigned short enemy_full_health_picture[20*10];
 extern const unsigned short enemy_half_health_picture[20*10];
+extern const unsigned short big_enemy_full_health_picture[20*10];
+extern const unsigned short big_enemy_half_health_picture[20*10];
 extern const unsigned short health_bar[8*8];
 extern const unsigned short bull_colors[6];
 

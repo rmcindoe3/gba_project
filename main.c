@@ -186,6 +186,21 @@ void drawEnemy(ENEMY* enemy) {
             }
         }
     }
+    else if(enemy->type == BIGG) {
+
+        for(i = 0; i < enemy->height; i++) {
+            //If the enemy has more than 10 health, use the full health picture source array
+            if(enemy->health > 10) {
+                DMANow(3, &(big_enemy_full_health_picture[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
+                        enemy->width |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
+            }
+            //If the enemy has 10 or less health, use the half health picture source array
+            else {
+                DMANow(3, &(big_enemy_half_health_picture[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
+                        enemy->width |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
+            }
+        }
+    }
     else if(enemy->type == BOSS) {
         for(i = 0; i < enemy->height; i++) {
             DMANow(3, &(boss_picture[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],

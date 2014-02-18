@@ -24,13 +24,13 @@ char level_one[21] = {
 
 char level_two[21] = {
     NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, 
-    NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, 
+    BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, 
     BOSS
 };
 
 char level_three[21] = {
-    NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, 
-    NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, NORM, 
+    BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, 
+    BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, 
     BOSS
 };
 
@@ -41,11 +41,15 @@ char level_four[21] = {
 };
 
 char getNextEnemyType(void) {
-    return levels[curr_level][level_index];
+    return levels[curr_level-1][level_index];
 }
 
 char pullNextEnemy(void) {
-    return levels[curr_level][level_index++];
+    return levels[curr_level-1][level_index++];
+}
+
+unsigned char getCurrentLevel(void) {
+    return curr_level;
 }
 
 void advanceLevel(void) {

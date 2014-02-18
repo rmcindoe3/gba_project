@@ -258,6 +258,9 @@ char determineEnemySpawn(char enemyType, int add_enemy_cnt) {
         else if(enemyType == NORM) {
             return TRUE;
         }
+        else if(enemyType == BIGG) {
+            return TRUE;
+        }
     }
     return FALSE;
 }
@@ -316,8 +319,11 @@ void initEnemy(ENEMY* enemy, char type) {
     if(type == NORM) {
 	enemy->health = 10;
     }
+    else if(type == BIGG) {
+        enemy->health = 20;
+    }
     else if(type == BOSS) {
-        enemy->health = 40;
+        enemy->health = 40*getCurrentLevel();
 	enemy->height = 20;
 	enemy->width = 40;
     }

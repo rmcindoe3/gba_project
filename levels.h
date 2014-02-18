@@ -5,6 +5,7 @@
 
 #define NORM 0x01
 #define BOSS 0x02
+#define BIGG 0x03
 
 extern unsigned char level_index;
 extern unsigned char curr_level;
@@ -17,6 +18,7 @@ extern char level_four[21];
 void reset_level(void);
 char getNextEnemyType(void);
 char pullNextEnemy(void);
+unsigned char getCurrentLevel(void);
 void advanceLevel(void);
 char* getLevelString(void);
 
