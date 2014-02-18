@@ -174,11 +174,7 @@ int delete_from_enemy_list(ENEMY* val)
     return 0;
 }
 
-/** moveEnemies *******************************************
- * Takes in our array of enemy OBJECTs and moves all of
- *  them. 
- *********************************************************/
-void moveEnemies() {
+void addEnemies() {
 
     static int add_enemy_cnt = 0;
 
@@ -188,7 +184,6 @@ void moveEnemies() {
         //If the next enemy isn't a boss, start incrementing the count already.
 	if(level_one[level_index] != BOSS || !get_enemy_list_size()) add_enemy_cnt++;
 
-	//This rand() is to make sure the enemies don't all fall one after each other
 	if(determineEnemySpawn(level_one[level_index], add_enemy_cnt)) {
 
             //If the next enemy is a boss and there are no enemies on the screen...
@@ -207,6 +202,13 @@ void moveEnemies() {
 	    }
 	}
     }
+}
+
+/** moveEnemies *******************************************
+ * Takes in our array of enemy OBJECTs and moves all of
+ *  them. 
+ *********************************************************/
+void moveEnemies() {
 
     struct enemy_llist* temp = get_enemy_head();
 
@@ -321,11 +323,15 @@ void initEnemy(ENEMY* enemy, char type) {
 	enemy->health = 10;
     }
     else if(type == BOSS) {
-        enemy->health = 20;
+        enemy->health = 40;
 	enemy->height = 20;
 	enemy->width = 40;
     }
     
+}
+
+void reset_level() {
+    level_index = 0;
 }
 
 void updateOldEnemy(struct enemy_llist* node) {

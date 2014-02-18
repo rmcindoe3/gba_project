@@ -57,5 +57,6 @@ void moveEnemies(void);
 void initEnemy(ENEMY* enemy, char type);
 void updateOldEnemy(struct enemy_llist* node);
 char determineEnemySpawn(char enemyType, int add_enemy_cnt);
+void reset_level(void);
 
 #endif

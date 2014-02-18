@@ -272,6 +272,9 @@ void moveGameObjects() {
 	}
     }
 
+    //Adds enemies to the screen, if necessary.
+    addEnemies();
+
     //Move the enemies and the bullets on the screen
     moveEnemies();
     moveBullets();
@@ -500,6 +503,9 @@ void init() {
 
     //Empties the enemy list.
     empty_enemy_list();
+
+    //Resets the level of the game.
+    reset_level();
 
     //Empties our bullet lists.
     empty_bullet_list();
