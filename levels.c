@@ -63,6 +63,7 @@ char* getLevelString(void) {
 
 void reset_level() {
     level_index = 0;
+    curr_level = 1;
 }
 
 

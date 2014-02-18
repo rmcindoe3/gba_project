@@ -331,6 +331,12 @@ void checkCollisions() {
 		//Decrement the enemies health.
 		//  If the enemy has 0 health after this, erase and delete it
 		if(--(enemy_list->val->health) == 0) {
+
+                    if(enemy_list->val->type == BOSS) {
+                        advanceLevel();
+                        displayLevelString = 100;
+                    }
+
 		    drawRect(enemy_list->old_val->row, enemy_list->old_val->col, enemy_list->old_val->height, enemy_list->old_val->width, BGCOLOR);
 		    delete_from_enemy_list(enemy_list->val);
 
@@ -535,5 +541,7 @@ void init() {
     ship_old.col = ship.col;
     ship_old.height = ship.height;
     ship_old.width = ship.width;
+
+    displayLevelString = 100;
 
 }
