@@ -699,12 +699,7 @@ void displayShopScreen() {
 void createWeaponUpgradeString(char* str) {
 
     //Figure out what the cost of the next weapon upgrade is.
-    int weaponCost = 200;
-    if(ship.weapon_level == 2) weaponCost = 500;
-    else if(ship.weapon_level == 5) weaponCost = 1000;
-    else if(ship.weapon_level == 10) weaponCost = 2000;
-    else if(ship.weapon_level == 20) weaponCost = 5000;
-    else if(ship.weapon_level == 50) weaponCost = 9999;
+    int weaponCost = determineWeaponCost();
 
     //Place initial string into array.
     sprintf(str, "WEAPON UPGRADE.....%06d", weaponCost);
@@ -780,10 +775,10 @@ void purchaseItem(char cursor_pos) {
     }
 }
 
-/** purchaseWeaponUpgrade ************************************
- * Attempts to purchase a weapon upgrade for the ship.
+/** determineWeaponCost **************************************
+ * Determines and returns the cost of the next weapon upgrade
  *************************************************************/
-void purchaseWeaponUpgrade() {
+int determineWeaponCost() {
 
     //Determine the upgrade cost of the next weapon.
     int weaponCost = 200;
@@ -793,16 +788,35 @@ void purchaseWeaponUpgrade() {
     else if(ship.weapon_level == 20) weaponCost = 5000;
     else if(ship.weapon_level == 50) weaponCost = 9999;
 
+    return weaponCost;
+}
+
+/** upgradeWeapon ********************************************
+ * Upgrades the current weapon to the next level!
+ *************************************************************/
+void upgradeWeapon() {
+
+    if(ship.weapon_level == 1) ship.weapon_level = 2;
+    else if(ship.weapon_level == 2) ship.weapon_level = 5;
+    else if(ship.weapon_level == 5) ship.weapon_level = 10;
+    else if(ship.weapon_level == 10) ship.weapon_level = 20;
+    else if(ship.weapon_level == 20) ship.weapon_level = 50;
+    else if(ship.weapon_level == 50) ship.weapon_level = 100;
+}
+
+/** purchaseWeaponUpgrade ************************************
+ * Attempts to purchase a weapon upgrade for the ship.
+ *************************************************************/
+void purchaseWeaponUpgrade() {
+
+    //Determine the upgrade cost of the next weapon.
+    int weaponCost = determineWeaponCost();
+
     //If the user has enough money to purchase the weapon...
     if(money >= weaponCost) {
 
         //Upgrade the ship's weapon based on how much the user paid.
-        if(weaponCost == 200) ship.weapon_level = 2;
-        else if(weaponCost == 500) ship.weapon_level = 5;
-        else if(weaponCost == 1000) ship.weapon_level = 10;
-        else if(weaponCost == 2000) ship.weapon_level = 20;
-        else if(weaponCost == 5000) ship.weapon_level = 50;
-        else if(weaponCost == 9999) ship.weapon_level = 100;
+        upgradeWeapon();
 
         //Display a confirmation message to the user.
         drawString(65, 120-3*strlen("WEAPON UPGRADED!"), "WEAPON UPGRADED!", GREEN);

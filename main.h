@@ -78,5 +78,8 @@ void purchaseHealth(void);
 void drawCursor(void);
 unsigned short determineBulletColor(void);
 
+void upgradeWeapon(void);
+int determineWeaponCost(void);
+
 #endif	/* MAIN_H */
 
