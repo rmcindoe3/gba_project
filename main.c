@@ -285,9 +285,8 @@ void checkGameButtons() {
     //If button A is pressed and we don't have too many bullets
     //	shot out already, then shoot a bullet
     if(BUTTON_PRESSED(BUTTON_A)) {
-	if(get_bullet_list_size() < NUM_BULLETS) {
-	    add_to_bullet_list(ship.row, ship.col + ship.width/2, FALSE);
-	}
+        add_to_bullet_list(ship.row, ship.col + ship.width/2, FALSE);
+        bullets_shot++;
     }
 
     //If the start button is pressed, pause the game
@@ -399,6 +398,9 @@ void checkCollisions() {
 
 	    //Checks to see if a collision happened between the bullet and enemy.
 	    if(collision(enemy_list->val, bullet_list->val)) {
+
+                //increment our bullets hit counter.
+                bullets_hit++;
 
 		//Erase and delete the bullet from our bullet list.
 		drawRect(bullet_list->old_val->row, bullet_list->old_val->col, bullet_list->old_val->height, bullet_list->old_val->width, BGCOLOR);
@@ -568,7 +570,6 @@ void drawGameText() {
     }
 }
 
-
 /** updateOldVariables ****************************************************
  * Updates all "old" variables that will need to be erased next loop cycle.
  ******************************************************************/
@@ -658,8 +659,24 @@ void displayShopScreen() {
         createWeaponUpgradeString(shopStr);
         drawString(40, 120-3*strlen(shopStr), shopStr, BLUE);
 
-        sprintf(shopStr, "PRESS START TO CONTINUE!");
+        sprintf(shopStr, "Press A to Purchase Item");
+        drawString(90, 120-3*strlen(shopStr), shopStr, BLUE);
+
+        sprintf(shopStr, "Press START to Continue!");
         drawString(100, 120-3*strlen(shopStr), shopStr, BLUE);
+
+        //Calculates the amount of bonus money the user won
+        //  and their hit rate.
+        int bonus_money = (int)(((double)bullets_hit)/bullets_shot * (getCurrentLevel() + 1) * 100);
+        int hit_rate = (int)(((double)bullets_hit)/bullets_shot*100);
+        
+        sprintf(shopStr, "Gained %d bonus money", bonus_money);
+        drawString(115, 120-3*strlen(shopStr), shopStr, GREEN);
+
+        sprintf(shopStr, "from %02d%% hit rate!", hit_rate);
+        drawString(125, 120-3*strlen(shopStr), shopStr, GREEN);
+
+        money += bonus_money;
 
         state_old = SHOP;
     }
@@ -730,6 +747,8 @@ void checkShopButtons() {
     if(BUTTON_PRESSED(BUTTON_START)) {
 	state = GAME;
         advanceLevel();
+        bullets_shot = 0;
+        bullets_hit = 0;
         displayLevelString = 100;
         fillBackground(BGCOLOR);
     }
@@ -749,7 +768,7 @@ void checkShopButtons() {
 void purchaseItem(char cursor_pos) {
 
     //Erases any previous purchase messages from the screen
-    drawRect(80,0,8,240,BLACK);
+    drawRect(65,0,8,240,BLACK);
 
     //If the cursor is hovering over health...
     if(cursor_pos == 0) {
@@ -786,7 +805,7 @@ void purchaseWeaponUpgrade() {
         else if(weaponCost == 9999) ship.weapon_level = 100;
 
         //Display a confirmation message to the user.
-        drawString(80, 120-3*strlen("WEAPON UPGRADED!"), "WEAPON UPGRADED!", GREEN);
+        drawString(65, 120-3*strlen("WEAPON UPGRADED!"), "WEAPON UPGRADED!", GREEN);
 
         //Take their money.
         money -= weaponCost;
@@ -799,7 +818,7 @@ void purchaseWeaponUpgrade() {
     }
     //If they don't have enough moeny, let them know.
     else {
-        drawString(80, 120-3*strlen("SORRY, NOT ENOUGH MONEY!"), "SORRY, NOT ENOUGH MONEY!", RED);
+        drawString(65, 120-3*strlen("SORRY, NOT ENOUGH MONEY!"), "SORRY, NOT ENOUGH MONEY!", RED);
     }
 
 }
@@ -812,7 +831,7 @@ void purchaseHealth() {
     //If the user is already at maximum health, don't let them
     //  purchase more and inform them why.
     if(ship.health == MAX_HEALTH) {
-        drawString(80, 120-3*strlen("SORRY, ALREADY AT MAX HEALTH"), "SORRY, ALREADY AT MAX HEALTH", RED);
+        drawString(65, 120-3*strlen("SORRY, ALREADY AT MAX HEALTH"), "SORRY, ALREADY AT MAX HEALTH", RED);
     }
     else {
 
@@ -820,7 +839,7 @@ void purchaseHealth() {
         if(money >= 50) {
 
             //Let them know
-            drawString(80, 120-3*strlen("HEALTH ADDED!"), "HEALTH ADDED!", GREEN);
+            drawString(65, 120-3*strlen("HEALTH ADDED!"), "HEALTH ADDED!", GREEN);
 
             //Increase their health and decrease their money.
             ship.health++;
@@ -828,7 +847,7 @@ void purchaseHealth() {
         }
         //If the user doesn't have enough money, let them know.
         else {
-            drawString(80, 120-3*strlen("SORRY, NOT ENOUGH MONEY!"), "SORRY, NOT ENOUGH MONEY!", RED);
+            drawString(65, 120-3*strlen("SORRY, NOT ENOUGH MONEY!"), "SORRY, NOT ENOUGH MONEY!", RED);
         }
     }
 }
@@ -876,6 +895,9 @@ void init() {
     
     money = 0;
     score = 0;
+    
+    bullets_shot = 0;
+    bullets_hit = 0;
 
     //Reinitializes old variables for the ship.
     ship_old.row = ship.row;

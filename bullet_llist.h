@@ -6,8 +6,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define NUM_BULLETS 5
-
 //Struct that contains relevant information for BULLET
 typedef struct bullet {
     char row;

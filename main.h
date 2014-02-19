@@ -25,8 +25,10 @@ u16 state = GAME;
 u16 state_old = GAME;
 
 //Keeps track of how many points the user has.
-u16 score = 0;
-u16 money = 0;
+unsigned short score = 0;
+unsigned short money = 0;
+unsigned short bullets_shot;
+unsigned short bullets_hit;
 char shop_cursor_pos = 0;
 
 //Keeps track of user input.
