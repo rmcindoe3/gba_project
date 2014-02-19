@@ -1,7 +1,8 @@
-
-
 #ifndef MAIN_H
 #define	MAIN_H
+
+#include "enemy_llist.h"
+#include "bullet_llist.h"
 
 //Game states
 #define GAME 0x01
@@ -21,15 +22,14 @@ typedef struct ship {
 } SHIP;
 
 //Variables that store what state the game is in.
-u16 state = GAME;
-u16 state_old = GAME;
+extern unsigned short state;
+extern unsigned short state_old;
 
 //Keeps track of how many points the user has.
-unsigned short score = 0;
-unsigned short money = 0;
+extern unsigned short score;
+
 unsigned short bullets_shot;
 unsigned short bullets_hit;
-char shop_cursor_pos = 0;
 
 //Keeps track of user input.
 unsigned int buttons;
@@ -71,15 +71,7 @@ void checkPauseButtons(void);
 
 void checkShopButtons(void);
 void displayShopScreen(void);
-void createWeaponUpgradeString(char* str);
-void purchaseItem(char cursor_pos);
-void purchaseWeaponUpgrade(void);
-void purchaseHealth(void);
 void drawCursor(void);
-unsigned short determineBulletColor(void);
-
-void upgradeWeapon(void);
-int determineWeaponCost(void);
 
 #endif	/* MAIN_H */
 
