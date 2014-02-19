@@ -4,6 +4,7 @@
 #include "main.h"
 #include "levels.h"
 #include "shop.h"
+#include "pictures.h"
 
 //Determines whether or not we display the level string on screen
 char displayLevelString = 100;

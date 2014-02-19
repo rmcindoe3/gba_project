@@ -9,7 +9,11 @@
 #define PAUSE 0x02
 #define SHOP 0x03
 
+//The maximum health a player can have
 #define MAX_HEALTH 10
+
+//The background color of our game.
+#define BGCOLOR CYAN
 
 //Struct that contains the relevant information for our SHIP
 typedef struct ship {

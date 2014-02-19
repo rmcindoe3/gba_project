@@ -1,5 +1,7 @@
 #include "bullet_llist.h"
 #include "myLib.h"
+#include "pictures.h"
+#include "main.h"
 
 struct bullet_llist *bullet_head = NULL;
 struct bullet_llist *bullet_curr = NULL;
