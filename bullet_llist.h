@@ -32,8 +32,8 @@ extern struct bullet_llist *e_bullet_head;
 extern struct bullet_llist *e_bullet_curr;
 extern int e_bullet_listSize;
 
-struct bullet_llist* create_bullet_list(int row, int col);
-struct bullet_llist* add_to_bullet_list(int row, int col, int add_to_end);
+struct bullet_llist* create_bullet_list(int row, int col, signed short horz_velocity);
+struct bullet_llist* add_to_bullet_list(int row, int col, signed short horz_velocity, int add_to_end);
 struct bullet_llist* search_in_bullet_list(BULLET* val, struct bullet_llist **prev);
 struct bullet_llist* get_bullet_head(void);
 struct bullet_llist* get_bullet_tail(void);
@@ -53,7 +53,7 @@ int e_delete_from_bullet_list(BULLET* val);
 int e_get_bullet_list_size(void);
 
 void moveBullets(void);
-void initBullet(BULLET* bullet, int row, int col);
+void initBullet(BULLET* bullet, int row, int col, signed short horz_velocity);
 void e_initBullet(BULLET* bullet, int row, int col, signed short horz_velocity);
 void updateOldBullet(struct bullet_llist* node);
 

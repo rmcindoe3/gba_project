@@ -285,7 +285,7 @@ void checkGameButtons() {
     //If button A is pressed and we don't have too many bullets
     //	shot out already, then shoot a bullet
     if(BUTTON_PRESSED(BUTTON_A)) {
-        add_to_bullet_list(ship.row, ship.col + ship.width/2, FALSE);
+        add_to_bullet_list(ship.row, ship.col + ship.width/2, 0, FALSE);
         bullets_shot++;
     }
 

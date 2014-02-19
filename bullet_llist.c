@@ -9,7 +9,7 @@ struct bullet_llist *e_bullet_head = NULL;
 struct bullet_llist *e_bullet_curr = NULL;
 int e_bullet_listSize = 0;
 
-struct bullet_llist* create_bullet_list(int row, int col)
+struct bullet_llist* create_bullet_list(int row, int col, signed short horz_velocity)
 {
     struct bullet_llist *ptr = (struct bullet_llist*)malloc(sizeof(struct bullet_llist));
     if(NULL == ptr)
@@ -21,7 +21,7 @@ struct bullet_llist* create_bullet_list(int row, int col)
     ptr->old_val = (BULLET*)malloc(sizeof(BULLET)); 
     ptr->next = NULL;
 
-    initBullet(ptr->val, row, col);
+    initBullet(ptr->val, row, col, horz_velocity);
     updateOldBullet(ptr);
 
     bullet_listSize++;
@@ -67,11 +67,11 @@ struct bullet_llist* get_bullet_tail(void) {
     return bullet_curr;
 }
 
-struct bullet_llist* add_to_bullet_list(int row, int col, int add_to_end)
+struct bullet_llist* add_to_bullet_list(int row, int col, signed short horz_velocity, int add_to_end)
 {
     if(NULL == bullet_head)
     {
-	return (create_bullet_list(row, col));
+	return (create_bullet_list(row, col, horz_velocity));
     }
 
     struct bullet_llist *ptr = (struct bullet_llist*)malloc(sizeof(struct bullet_llist));
@@ -84,7 +84,7 @@ struct bullet_llist* add_to_bullet_list(int row, int col, int add_to_end)
     ptr->old_val = (BULLET*)malloc(sizeof(BULLET)); 
     ptr->next = NULL;
 
-    initBullet(ptr->val, row, col);
+    initBullet(ptr->val, row, col, horz_velocity);
     updateOldBullet(ptr);
 
     if(add_to_end)
@@ -342,7 +342,31 @@ void moveBullets() {
         //Move the bullet vertically based on vert_velocity
 	temp->val->row += temp->val->vert_velocity;
 
-	if(temp->val->row <= 3) {
+        if(temp->val->horz_velocity != 0) {
+
+            temp->val->horz_step--;
+
+            //If it's time to move horizontally, then move horizontally.
+            if(temp->val->horz_step == 0) {
+
+                if(temp->val->horz_velocity > 0) {
+                    temp->val->col++;
+                }
+                else {
+                    temp->val->col--;
+                }
+
+                //We want to reset horz_step now.
+                if(temp->val->horz_velocity < 0) {
+                    temp->val->horz_step = -1*temp->val->horz_velocity;
+                }
+                else {
+                    temp->val->horz_step = temp->val->horz_velocity;
+                }
+            }
+        }
+
+	if(temp->val->row <= 3 || temp->val->col >= 237 || temp->val->col <= 1) {
 	    del = temp; 
 	} else {
 	    del = NULL;
@@ -404,13 +428,21 @@ void moveBullets() {
     }
 }
 
-void initBullet(BULLET* bullet, int row, int col) {
+void initBullet(BULLET* bullet, int row, int col, signed short horz_velocity) {
     bullet->col = col;
     bullet->row = row;
     bullet->height = 5;
     bullet->width = 3;
     bullet->vert_velocity = -3;
-    bullet->horz_velocity = 0;
+    bullet->horz_velocity = horz_velocity;
+
+    //We want the step rate to be positive always
+    if(horz_velocity < 0) {
+        bullet->horz_step = -1*horz_velocity;
+    }
+    else {
+        bullet->horz_step = horz_velocity;
+    }
 }
 
 void e_initBullet(BULLET* bullet, int row, int col, signed short horz_velocity) {
