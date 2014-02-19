@@ -12,6 +12,7 @@ char scoreStr[] = "Score: 1234";
 
 //Determines whether or not we display the level string on screen
 char displayLevelString = 100;
+char displayLevelComplete = 0;
 
 //Main function of program.
 int main() {
@@ -55,6 +56,15 @@ int main() {
 	    //Pauses for a bit before moving to the next frame
 	    pause(1);
 
+	} //If the game is in the SHOP state
+	else if(state == SHOP) {
+
+            waitForVblank();
+            displayShopScreen();
+
+	    //Check for user input
+	    checkShopButtons();
+
 	} //If the game is in the PAUSE state
 	else if(state == PAUSE) {
 
@@ -78,22 +88,17 @@ int main() {
  ******************************************************************/
 void drawBullets(int erase) {
 
-    //Static variable for this function for determining the 
-    //	color of a bullet to draw.  Indexes through bull_colors color array.
-    static int clr = 0;
-
-    //If we're drawing bullets, increment to the next bullet color
-    if(!erase) clr++;
-
     //Gets a pointer to the head of our ship's bullets list
     struct bullet_llist* bullet_list = get_bullet_head();
+
+    unsigned short clr = determineBulletColor();
 
     while(bullet_list != NULL) {
 
 	//If we're erasing, erase the old location of the bullet
 	//  otherwise, draw the new location of the bullet
 	if(erase) drawRect(bullet_list->old_val->row, bullet_list->old_val->col, bullet_list->old_val->height, bullet_list->old_val->width, BGCOLOR);
-	else drawRect(bullet_list->val->row, bullet_list->val->col, bullet_list->val->height, bullet_list->val->width, bull_colors[clr%6]);
+	else drawRect(bullet_list->val->row, bullet_list->val->col, bullet_list->val->height, bullet_list->val->width, clr);
 
 	bullet_list = bullet_list->next;
     }
@@ -110,6 +115,20 @@ void drawBullets(int erase) {
 
 	bullet_list = bullet_list->next;
     }
+}
+
+/** determineBulletColor **************************************
+ * Determines the color of the bullet to be shot, which is based
+ *  on the current weapon level of the ship.
+ *************************************************************/
+unsigned short determineBulletColor() {
+
+    if(ship.weapon_level == 1) return YELLOW;
+    if(ship.weapon_level == 2) return BLUE;
+    if(ship.weapon_level == 5) return GREEN;
+    if(ship.weapon_level == 10) return MAGENTA;
+    if(ship.weapon_level == 20) return RED;
+    if(ship.weapon_level == 50) return BLACK;
 }
 
 /** drawEnemies ********************************************
@@ -280,7 +299,6 @@ void checkGameButtons() {
     if(BUTTON_PRESSED(BUTTON_SELECT)) {
 	init();
 	fillBackground(BGCOLOR);
-	score = 0;
     }
 }
 
@@ -302,8 +320,10 @@ void moveGameObjects() {
 	}
     }
 
-    //Adds enemies to the screen, if necessary.
-    addEnemies();
+    //If the level hasn't just been completed, add enemies 
+    if(!displayLevelComplete) {
+        addEnemies();
+    }
 
     //Move the enemies and the bullets on the screen
     moveEnemies();
@@ -385,14 +405,15 @@ void checkCollisions() {
 		delete_from_bullet_list(bullet_list->val);
 
 		//Decrement the enemies health.
+                enemy_list->val->health -= ship.weapon_level;
+
 		//  If the enemy has 0 health after this, erase and delete it
-		if(--(enemy_list->val->health) <= 0) {
+		if(enemy_list->val->health <= 0) {
 
                     //If the enemy is a boss, then move forward a level and
                     //  set the counter that displays the level string.
                     if(enemy_list->val->type == BOSS) {
-                        advanceLevel();
-                        displayLevelString = 100;
+                        displayLevelComplete = 100;
                     }
 
                     //Erase the enemy.
@@ -403,6 +424,12 @@ void checkCollisions() {
 
 		    //Also increment the score
 		    score++;
+
+                    //And give the user some money.
+                    if(enemy_list->val->type == NORM) money += 10;
+                    else if(enemy_list->val->type == BIGG) money += 20;
+                    else if(enemy_list->val->type == TRIS) money += 40;
+                    else if(enemy_list->val->type == BOSS) money += 40*(getCurrentLevel());
 		}
 	    }
 
@@ -444,7 +471,6 @@ void checkCollisions() {
 	    if(!ship.health) {
 		init();
 		fillBackground(BGCOLOR);
-		score = 0;
 	    }
 	}
 
@@ -458,7 +484,7 @@ void checkCollisions() {
 void eraseOldObjects() {
 
     //Clears the screen if the game was just unpaused.
-    if(state_old == PAUSE) {
+    if(state_old == PAUSE || state_old == SHOP) {
 	fillBackground(BGCOLOR);
 	state_old = GAME;
     }
@@ -521,6 +547,23 @@ void drawGameText() {
         //If the count just reached zero, erase the level string message.
         if(displayLevelString == 0) {
             drawRect(80,0,10,240,BGCOLOR);
+        }
+    }
+
+    if(displayLevelComplete) {
+
+        //Change which color we're going to use.
+        clr++;
+
+        //Draw the string
+        drawString(80, 120 - 3*strlen("LEVEL COMPLETE!"), "LEVEL COMPLETE!", bull_colors[clr%6]);
+
+        //Decrement the count.
+        displayLevelComplete--;
+
+        //If the count just reached zero, move to the shop.
+        if(displayLevelComplete == 0) {
+            state = SHOP;
         }
     }
 }
@@ -592,7 +635,219 @@ void checkPauseButtons() {
 	fillBackground(BLACK);
 	char pauseStr[] = "PAUSED";
 	drawString(76, 102, pauseStr, BLUE);
-	score = 0;
+    }
+}
+
+/** displayShopScreen ****************************************************
+ * Draws the shop screen to the display.
+ ******************************************************************/
+void displayShopScreen() {
+
+    char shopStr[26];
+
+    //If we just entered the shop, display the shop to the screen.
+    if(state_old != SHOP) {
+        fillBackground(BLACK);
+
+        sprintf(shopStr, "SHOP!");
+        drawString(10, 120-6*3, shopStr, BLUE);
+
+        sprintf(shopStr, "HEALTH UPGRADE.........50");
+        drawString(30, 120-3*strlen(shopStr), shopStr, BLUE);
+
+        createWeaponUpgradeString(shopStr);
+        drawString(40, 120-3*strlen(shopStr), shopStr, BLUE);
+
+        sprintf(shopStr, "PRESS START TO CONTINUE!");
+        drawString(100, 120-3*strlen(shopStr), shopStr, BLUE);
+
+        state_old = SHOP;
+    }
+    
+    //Always update how much money the user has.
+    drawRect(142, 100, 10, 32, BLACK);
+    sprintf(shopStr, "Current Money: %d", money);
+    drawString(142, 10, shopStr, BLUE);
+
+    //Update the cursor's location.
+    drawRect(30,30,20,6,BLACK);
+    drawCursor();
+
+}
+
+/** createWeaponUpgradeString **********************************
+ * Creates the appropriate weapon upgrade string for current
+ *  purchase history.
+ *************************************************************/
+void createWeaponUpgradeString(char* str) {
+
+    //Figure out what the cost of the next weapon upgrade is.
+    int weaponCost = 200;
+    if(ship.weapon_level == 2) weaponCost = 500;
+    else if(ship.weapon_level == 5) weaponCost = 1000;
+    else if(ship.weapon_level == 10) weaponCost = 2000;
+    else if(ship.weapon_level == 20) weaponCost = 5000;
+    else if(ship.weapon_level == 50) weaponCost = 9999;
+
+    //Place initial string into array.
+    sprintf(str, "WEAPON UPGRADE.....%06d", weaponCost);
+
+    //Blank out the leading zeros with periods.
+    char* temp = str;
+    while(*temp != '.') temp++;
+    while(*temp == '.') temp++;
+    while(*temp == '0') {
+        *temp = '.';
+        temp++;
+    }
+}
+
+/** checkShopButtons ****************************************************
+ * Checks for user input during the shop screen.
+ ******************************************************************/
+void checkShopButtons() {
+
+    //If the user tries to purchase something from the shop.
+    if(BUTTON_PRESSED(BUTTON_A)) {
+        purchaseItem(shop_cursor_pos);
+    }
+
+    //If the user pressed up, move the cursor up
+    if(BUTTON_PRESSED(BUTTON_UP)) {
+        if(shop_cursor_pos != 0) {
+            shop_cursor_pos--;
+        }
+    }
+
+    //If the user pressed down, move the cursor down
+    if(BUTTON_PRESSED(BUTTON_DOWN)) {
+        if(shop_cursor_pos != 1) {
+            shop_cursor_pos++;
+        }
+    }
+
+    //If the start button is pressed, resume the game.
+    if(BUTTON_PRESSED(BUTTON_START)) {
+	state = GAME;
+        advanceLevel();
+        displayLevelString = 100;
+        fillBackground(BGCOLOR);
+    }
+
+    //If the select button is pressed, reinitialize the game.
+    if(BUTTON_PRESSED(BUTTON_SELECT)) {
+	init();
+        state = GAME;
+    }
+
+}
+
+/** purchaseItem **********************************************
+ * The user is trying to purchase the item at the given cursor
+ *  position.
+ *************************************************************/
+void purchaseItem(char cursor_pos) {
+
+    //Erases any previous purchase messages from the screen
+    drawRect(80,0,8,240,BLACK);
+
+    //If the cursor is hovering over health...
+    if(cursor_pos == 0) {
+        purchaseHealth();
+    }
+    //If the cursor is trying to upgrade weapons...
+    else if(cursor_pos == 1) {
+        purchaseWeaponUpgrade();
+    }
+}
+
+/** purchaseWeaponUpgrade ************************************
+ * Attempts to purchase a weapon upgrade for the ship.
+ *************************************************************/
+void purchaseWeaponUpgrade() {
+
+    //Determine the upgrade cost of the next weapon.
+    int weaponCost = 200;
+    if(ship.weapon_level == 2) weaponCost = 500;
+    else if(ship.weapon_level == 5) weaponCost = 1000;
+    else if(ship.weapon_level == 10) weaponCost = 2000;
+    else if(ship.weapon_level == 20) weaponCost = 5000;
+    else if(ship.weapon_level == 50) weaponCost = 9999;
+
+    //If the user has enough money to purchase the weapon...
+    if(money >= weaponCost) {
+
+        //Upgrade the ship's weapon based on how much the user paid.
+        if(weaponCost == 200) ship.weapon_level = 2;
+        else if(weaponCost == 500) ship.weapon_level = 5;
+        else if(weaponCost == 1000) ship.weapon_level = 10;
+        else if(weaponCost == 2000) ship.weapon_level = 20;
+        else if(weaponCost == 5000) ship.weapon_level = 50;
+        else if(weaponCost == 9999) ship.weapon_level = 100;
+
+        //Display a confirmation message to the user.
+        drawString(80, 120-3*strlen("WEAPON UPGRADED!"), "WEAPON UPGRADED!", GREEN);
+
+        //Take their money.
+        money -= weaponCost;
+
+        //Update the price of the next weapon upgrade in the shop.
+        drawRect(40,0,10,240,BLACK);
+        char tempStr[26];
+        createWeaponUpgradeString(tempStr);
+        drawString(40, 120-3*strlen(tempStr), tempStr, BLUE);
+    }
+    //If they don't have enough moeny, let them know.
+    else {
+        drawString(80, 120-3*strlen("SORRY, NOT ENOUGH MONEY!"), "SORRY, NOT ENOUGH MONEY!", RED);
+    }
+
+}
+
+/** purchaseHealth ********************************************
+ * Attempts to purchase health for the ship.
+ *************************************************************/
+void purchaseHealth() {
+
+    //If the user is already at maximum health, don't let them
+    //  purchase more and inform them why.
+    if(ship.health == MAX_HEALTH) {
+        drawString(80, 120-3*strlen("SORRY, ALREADY AT MAX HEALTH"), "SORRY, ALREADY AT MAX HEALTH", RED);
+    }
+    else {
+
+        //If the user has enough money to buy health.
+        if(money >= 50) {
+
+            //Let them know
+            drawString(80, 120-3*strlen("HEALTH ADDED!"), "HEALTH ADDED!", GREEN);
+
+            //Increase their health and decrease their money.
+            ship.health++;
+            money -= 50;
+        }
+        //If the user doesn't have enough money, let them know.
+        else {
+            drawString(80, 120-3*strlen("SORRY, NOT ENOUGH MONEY!"), "SORRY, NOT ENOUGH MONEY!", RED);
+        }
+    }
+}
+
+/** drawCursor *****************************************************
+ * Draws the cursor on the shop screen.
+ *************************************************************/
+void drawCursor() {
+
+    //static variable to keep track of frames to produce "blinking" effect 
+    static char frame_counter = 0;
+
+    frame_counter++;
+
+    if(frame_counter < 10) {
+        drawRect(30 + shop_cursor_pos*10, 30, 6, 6, BLUE);
+    }
+    else if(frame_counter >= 20) {
+        frame_counter = 0;
     }
 }
 
@@ -617,6 +872,10 @@ void init() {
     ship.height = 20;
     ship.width = 20;
     ship.health = 5;
+    ship.weapon_level = 1;
+    
+    money = 0;
+    score = 0;
 
     //Reinitializes old variables for the ship.
     ship_old.row = ship.row;
