@@ -93,14 +93,12 @@ void drawBullets(int erase) {
     //Gets a pointer to the head of our ship's bullets list
     struct bullet_llist* bullet_list = get_bullet_head();
 
-    unsigned short clr = determineBulletColor();
-
     while(bullet_list != NULL) {
 
 	//If we're erasing, erase the old location of the bullet
 	//  otherwise, draw the new location of the bullet
 	if(erase) drawRect(bullet_list->old_val->row, bullet_list->old_val->col, bullet_list->old_val->height, bullet_list->old_val->width, BGCOLOR);
-	else drawRect(bullet_list->val->row, bullet_list->val->col, bullet_list->val->height, bullet_list->val->width, clr);
+	else drawBullet(bullet_list->val);
 
 	bullet_list = bullet_list->next;
     }
@@ -131,6 +129,16 @@ unsigned short determineBulletColor() {
     if(ship.weapon_level == 6) return MAGENTA;
     if(ship.weapon_level == 10) return RED;
     if(ship.weapon_level == 11) return BLACK;
+}
+
+/** drawBullet *****************************************************
+ * Draws the bullet described by the given bullet object
+ *************************************************************/
+void drawBullet(BULLET* bullet) {
+
+    unsigned short clr = determineBulletColor();
+
+    drawRect(bullet->row, bullet->col, bullet->height, bullet->width, clr);
 }
 
 /** drawEnemies ********************************************
