@@ -126,9 +126,9 @@ unsigned short determineBulletColor() {
     if(ship.weapon_level == 1) return YELLOW;
     if(ship.weapon_level == 2) return BLUE;
     if(ship.weapon_level == 5) return GREEN;
-    if(ship.weapon_level == 10) return MAGENTA;
-    if(ship.weapon_level == 20) return RED;
-    if(ship.weapon_level == 50) return BLACK;
+    if(ship.weapon_level == 6) return MAGENTA;
+    if(ship.weapon_level == 10) return RED;
+    if(ship.weapon_level == 11) return BLACK;
 }
 
 /** drawEnemies ********************************************
@@ -285,8 +285,21 @@ void checkGameButtons() {
     //If button A is pressed and we don't have too many bullets
     //	shot out already, then shoot a bullet
     if(BUTTON_PRESSED(BUTTON_A)) {
-        add_to_bullet_list(ship.row, ship.col + ship.width/2, 0, FALSE);
-        bullets_shot++;
+        if(ship.weapon_level <= 5) {
+            add_to_bullet_list(ship.row, ship.col + ship.width/2, 0, FALSE);
+            bullets_shot++;
+        }
+        else if(ship.weapon_level >= 6 && ship.weapon_level <= 10) {
+            add_to_bullet_list(ship.row, ship.col + ship.width/2, 3, FALSE);
+            add_to_bullet_list(ship.row, ship.col + ship.width/2, -3, FALSE);
+            bullets_shot += 2;
+        }
+        else if(ship.weapon_level >= 11) {
+            add_to_bullet_list(ship.row, ship.col + ship.width/2, 0, FALSE);
+            add_to_bullet_list(ship.row, ship.col + ship.width/2, 1, FALSE);
+            add_to_bullet_list(ship.row, ship.col + ship.width/2, -1, FALSE);
+            bullets_shot += 3;
+        }
     }
 
     //If the start button is pressed, pause the game
@@ -784,9 +797,9 @@ int determineWeaponCost() {
     int weaponCost = 200;
     if(ship.weapon_level == 2) weaponCost = 500;
     else if(ship.weapon_level == 5) weaponCost = 1000;
-    else if(ship.weapon_level == 10) weaponCost = 2000;
-    else if(ship.weapon_level == 20) weaponCost = 5000;
-    else if(ship.weapon_level == 50) weaponCost = 9999;
+    else if(ship.weapon_level == 6) weaponCost = 2000;
+    else if(ship.weapon_level == 10) weaponCost = 5000;
+    else if(ship.weapon_level == 11) weaponCost = 9999;
 
     return weaponCost;
 }
@@ -798,10 +811,10 @@ void upgradeWeapon() {
 
     if(ship.weapon_level == 1) ship.weapon_level = 2;
     else if(ship.weapon_level == 2) ship.weapon_level = 5;
-    else if(ship.weapon_level == 5) ship.weapon_level = 10;
-    else if(ship.weapon_level == 10) ship.weapon_level = 20;
-    else if(ship.weapon_level == 20) ship.weapon_level = 50;
-    else if(ship.weapon_level == 50) ship.weapon_level = 100;
+    else if(ship.weapon_level == 5) ship.weapon_level = 6;
+    else if(ship.weapon_level == 6) ship.weapon_level = 10;
+    else if(ship.weapon_level == 10) ship.weapon_level = 11;
+    else if(ship.weapon_level == 11) ship.weapon_level = 20;
 }
 
 /** purchaseWeaponUpgrade ************************************
