@@ -1,5 +1,5 @@
-gba_project
-===========
+Personal GBA Project
+====================
 
 Phoenix inspired GBA game project.
 
@@ -10,10 +10,12 @@ emulators and can be found easily with a google search.
 File Structure Overview:
 
  - main.c/.h: Contains the main loop of the program, drawing
-    functions specifically created for this project, and keeps
-    track of the current state of the game.
+    functions specifically created for this project, and most
+    of the game flow logic.
  - myLib.c/.h: Contains functions and definitions that apply
-    to all GBA projects as well as our bitmap picture arrays.
+    to all GBA projects.
+ - shop.c/.h: Contains and keeps track of all in-game shop
+    related functions.
  - enemy llist.c/.h: Contains everything related to enemies.
     Specifically, it maintains our enemy linked list and has 
     functions that appropriately add enemies and manipulate 
@@ -28,3 +30,5 @@ File Structure Overview:
     given time.  
  - text.c/.h: Contains functions that will draw text to the
     GBA display.
+ - pictures.c/.h: Contains all the bitmap pictures I used
+    for drawing the sprites to the screen.
