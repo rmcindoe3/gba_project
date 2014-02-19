@@ -11,54 +11,81 @@ unsigned short money = 0;
 //Keeps track of where the cursor is in the shop.
 char shop_cursor_pos = 0;
 
-/** upgradeWeapon ********************************************
- * Upgrades the current weapon to the next level!
+UPGRADE weapon_damage_path[5];
+UPGRADE fire_rate_path[3];
+UPGRADE shot_count_path[3];
+
+unsigned char weapon_damage_index = 0;
+unsigned char fire_rate_index = 0;
+unsigned char shot_count_index = 0;
+
+/** assignUpgradePaths ****************************************
+ * Fills in the values of the upgrade paths so we can upgrade
+ * our ships weapons easily.
  *************************************************************/
-void upgradeWeapon() {
+void assignUpgradePaths() {
 
-    if(ship.weapon_level == 1) ship.weapon_level = 2;
-    else if(ship.weapon_level == 2) ship.weapon_level = 5;
-    else if(ship.weapon_level == 5) ship.weapon_level = 6;
-    else if(ship.weapon_level == 6) ship.weapon_level = 10;
-    else if(ship.weapon_level == 10) ship.weapon_level = 11;
-    else if(ship.weapon_level == 11) ship.weapon_level = 20;
-}
+    weapon_damage_path[0].upgrade_cost = 200;
+    weapon_damage_path[0].upgrade_value = 2;
 
-/** determineWeaponCost **************************************
- * Determines and returns the cost of the next weapon upgrade
- *************************************************************/
-int determineWeaponCost() {
+    weapon_damage_path[1].upgrade_cost = 500;
+    weapon_damage_path[1].upgrade_value = 4;
 
-    //Determine the upgrade cost of the next weapon.
-    int weaponCost = 200;
-    if(ship.weapon_level == 2) weaponCost = 500;
-    else if(ship.weapon_level == 5) weaponCost = 1000;
-    else if(ship.weapon_level == 6) weaponCost = 2000;
-    else if(ship.weapon_level == 10) weaponCost = 5000;
-    else if(ship.weapon_level == 11) weaponCost = 9999;
+    weapon_damage_path[2].upgrade_cost = 1000;
+    weapon_damage_path[2].upgrade_value = 6;
 
-    return weaponCost;
+    weapon_damage_path[3].upgrade_cost = 5000;
+    weapon_damage_path[3].upgrade_value = 10;
+
+    weapon_damage_path[4].upgrade_cost = 9999;
+    weapon_damage_path[4].upgrade_value = 15;
+
+    fire_rate_path[0].upgrade_cost = 500;
+    fire_rate_path[0].upgrade_value = 10;
+
+    fire_rate_path[1].upgrade_cost = 2000;
+    fire_rate_path[1].upgrade_value = 5;
+
+    fire_rate_path[2].upgrade_cost = 5000;
+    fire_rate_path[2].upgrade_value = 1;
+
+    shot_count_path[0].upgrade_cost = 2000;
+    shot_count_path[0].upgrade_value = 10;
+
+    shot_count_path[1].upgrade_cost = 5000;
+    shot_count_path[1].upgrade_value = 5;
+
+    shot_count_path[2].upgrade_cost = 9999;
+    shot_count_path[2].upgrade_value = 1;
+
 }
 
 /** createWeaponUpgradeString **********************************
- * Creates the appropriate weapon upgrade string for current
- *  purchase history.
+ * Creates the appropriate weapon damage upgrade string for
+ *  current purchase history.
  *************************************************************/
 void createWeaponUpgradeString(char* str) {
 
-    //Figure out what the cost of the next weapon upgrade is.
-    int weaponCost = determineWeaponCost();
+    //If the weapon is not already at max damage
+    if(weapon_damage_index != MAX_DMG) {
 
-    //Place initial string into array.
-    sprintf(str, "WEAPON UPGRADE.....%06d", weaponCost);
+        //Figure out what the cost of the next weapon upgrade is.
+        int weaponCost = weapon_damage_path[weapon_damage_index].upgrade_cost;
 
-    //Blank out the leading zeros with periods.
-    char* temp = str;
-    while(*temp != '.') temp++;
-    while(*temp == '.') temp++;
-    while(*temp == '0') {
-        *temp = '.';
-        temp++;
+        //Place initial string into array.
+        sprintf(str, "WEAPON DAMAGE......%06d", weaponCost);
+
+        //Blank out the leading zeros with periods.
+        char* temp = str;
+        while(*temp != '.') temp++;
+        while(*temp == '.') temp++;
+        while(*temp == '0') {
+            *temp = '.';
+            temp++;
+        }
+    }
+    else {
+        sprintf(str, "WEAPON DAMAGE.......MAXED");
     }
 }
 
@@ -66,18 +93,20 @@ void createWeaponUpgradeString(char* str) {
  * The user is trying to purchase the item at the given cursor
  *  position.
  *************************************************************/
-void purchaseItem(char cursor_pos) {
+void purchaseItem() {
 
     //Erases any previous purchase messages from the screen
     drawRect(65,0,8,240,BLACK);
 
     //If the cursor is hovering over health...
-    if(cursor_pos == 0) {
+    if(shop_cursor_pos == 0) {
         purchaseHealth();
     }
     //If the cursor is trying to upgrade weapons...
-    else if(cursor_pos == 1) {
-        purchaseWeaponUpgrade();
+    else if(shop_cursor_pos == 1) {
+        if(weapon_damage_index != MAX_DMG) {
+            purchaseWeaponUpgrade();
+        }
     }
 }
 
@@ -87,19 +116,22 @@ void purchaseItem(char cursor_pos) {
 void purchaseWeaponUpgrade() {
 
     //Determine the upgrade cost of the next weapon.
-    int weaponCost = determineWeaponCost();
+    int cost = weapon_damage_path[weapon_damage_index].upgrade_cost;
 
     //If the user has enough money to purchase the weapon...
-    if(money >= weaponCost) {
+    if(money >= cost) {
 
         //Upgrade the ship's weapon based on how much the user paid.
-        upgradeWeapon();
+        ship.weapon_damage = weapon_damage_path[weapon_damage_index].upgrade_value;
 
         //Display a confirmation message to the user.
         drawString(65, 120-3*strlen("WEAPON UPGRADED!"), "WEAPON UPGRADED!", GREEN);
 
         //Take their money.
-        money -= weaponCost;
+        money -= cost;
+
+        //Advance the weapon damage path index.
+        weapon_damage_index++;
 
         //Update the price of the next weapon upgrade in the shop.
         drawRect(40,0,10,240,BLACK);

@@ -22,12 +22,14 @@ typedef struct ship {
     char height;
     char width;
     char health;
-    char weapon_level;
+    char weapon_damage;
+    char fire_rate;
+    char shot_count;
 } SHIP;
 
 //Our ship structs that represent the user.
-SHIP ship;
-SHIP ship_old;
+extern SHIP ship;
+extern SHIP ship_old;
 
 //Variables that store what state the game is in.
 extern unsigned short state;

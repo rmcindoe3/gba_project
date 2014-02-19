@@ -17,6 +17,10 @@ unsigned short state_old = GAME;
 //Keeps track of how many points the user has.
 unsigned short score = 0;
 
+//Our ship structs that represent the user.
+SHIP ship;
+SHIP ship_old;
+
 //Main function of program.
 int main() {
 
@@ -25,6 +29,9 @@ int main() {
 
     //initializes the game pieces
     init();
+
+    //Initializes the upgrade paths in our shop.
+    assignUpgradePaths();
 
     //Main loop
     while(1) {
@@ -124,12 +131,12 @@ void drawBullets(int erase) {
  *************************************************************/
 unsigned short determineBulletColor() {
 
-    if(ship.weapon_level == 1) return YELLOW;
-    if(ship.weapon_level == 2) return BLUE;
-    if(ship.weapon_level == 5) return GREEN;
-    if(ship.weapon_level == 6) return MAGENTA;
-    if(ship.weapon_level == 10) return RED;
-    if(ship.weapon_level == 11) return BLACK;
+    if(ship.weapon_damage == 1) return YELLOW;
+    if(ship.weapon_damage == 2) return BLUE;
+    if(ship.weapon_damage == 4) return GREEN;
+    if(ship.weapon_damage == 6) return MAGENTA;
+    if(ship.weapon_damage == 10) return RED;
+    if(ship.weapon_damage == 15) return BLACK;
 }
 
 /** drawBullet *****************************************************
@@ -296,19 +303,19 @@ void checkGameButtons() {
     //If button A is pressed and we don't have too many bullets
     //	shot out already, then shoot a bullet
     if(BUTTON_PRESSED(BUTTON_A)) {
-        if(ship.weapon_level <= 5) {
+        if(ship.shot_count == 1) {
             add_to_bullet_list(ship.row, ship.col + ship.width/2, 0, FALSE);
             bullets_shot++;
         }
-        else if(ship.weapon_level >= 6 && ship.weapon_level <= 10) {
+        else if(ship.shot_count == 2) {
             add_to_bullet_list(ship.row, ship.col + ship.width/2, 3, FALSE);
             add_to_bullet_list(ship.row, ship.col + ship.width/2, -3, FALSE);
             bullets_shot += 2;
         }
-        else if(ship.weapon_level >= 11) {
+        else if(ship.shot_count == 3) {
             add_to_bullet_list(ship.row, ship.col + ship.width/2, 0, FALSE);
-            add_to_bullet_list(ship.row, ship.col + ship.width/2, 1, FALSE);
-            add_to_bullet_list(ship.row, ship.col + ship.width/2, -1, FALSE);
+            add_to_bullet_list(ship.row, ship.col + ship.width/2, 2, FALSE);
+            add_to_bullet_list(ship.row, ship.col + ship.width/2, -2, FALSE);
             bullets_shot += 3;
         }
     }
@@ -431,7 +438,7 @@ void checkCollisions() {
 		delete_from_bullet_list(bullet_list->val);
 
 		//Decrement the enemies health.
-                enemy_list->val->health -= ship.weapon_level;
+                enemy_list->val->health -= ship.weapon_damage;
 
 		//  If the enemy has 0 health after this, erase and delete it
 		if(enemy_list->val->health <= 0) {
@@ -731,7 +738,7 @@ void checkShopButtons() {
 
     //If the user tries to purchase something from the shop.
     if(BUTTON_PRESSED(BUTTON_A)) {
-        purchaseItem(shop_cursor_pos);
+        purchaseItem();
     }
 
     //If the user pressed up, move the cursor up
@@ -805,11 +812,15 @@ void init() {
     ship.height = 20;
     ship.width = 20;
     ship.health = 5;
-    ship.weapon_level = 1;
+    ship.weapon_damage = 1;
+    ship.fire_rate = 20;
+    ship.shot_count = 1;
     
+    //Reset money and score
     money = 0;
     score = 0;
     
+    //Reset bullet hit rate variables
     bullets_shot = 0;
     bullets_hit = 0;
 
