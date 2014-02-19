@@ -11,6 +11,7 @@
 
 #define MAX_HEALTH 10
 
+/*** THE FOLLOWING NEEDS TO BE MOVED TO IT'S OWN FILE ***/
 //Struct that contains the relevant information for our SHIP
 typedef struct ship {
     char row;
@@ -21,6 +22,12 @@ typedef struct ship {
     char weapon_level;
 } SHIP;
 
+//Our ship structs that represent the user.
+SHIP ship;
+SHIP ship_old;
+
+/*** UP TO HERE ***/
+
 //Variables that store what state the game is in.
 extern unsigned short state;
 extern unsigned short state_old;
@@ -28,6 +35,7 @@ extern unsigned short state_old;
 //Keeps track of how many points the user has.
 extern unsigned short score;
 
+//Keeps track of bullets shot and bullets hit for hit rate calculation.
 unsigned short bullets_shot;
 unsigned short bullets_hit;
 
@@ -35,20 +43,12 @@ unsigned short bullets_hit;
 unsigned int buttons;
 unsigned int oldButtons;
 
-//Our ship structs that represent the user.
-SHIP ship;
-SHIP ship_old;
-
-//Strings used to display text information on the screen.
-extern char scoreStr[20];
-extern char healthStr[20];
-
 /*** Full explanations of these functions ***
  *** can be found in the main.c file.     ***/
 void drawBullets(int erase);
 unsigned short determineBulletColor(void);
 void drawEnemies(int erase);
-void drawShip(SHIP* ship, int erase);
+void drawShip(int erase);
 void drawEnemy(ENEMY* enemy);
 
 char collision(ENEMY* enemy, BULLET* bullet);

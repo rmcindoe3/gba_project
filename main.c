@@ -5,10 +5,6 @@
 #include "levels.h"
 #include "shop.h"
 
-//Strings that store text to be displayed on the screen
-char healthStr[] = "Health:";
-char scoreStr[] = "Score: 1234";
-
 //Determines whether or not we display the level string on screen
 char displayLevelString = 100;
 char displayLevelComplete = 0;
@@ -19,9 +15,6 @@ unsigned short state_old = GAME;
 
 //Keeps track of how many points the user has.
 unsigned short score = 0;
-
-//unsigned short money;
-//char shop_cursor_pos;
 
 //Main function of program.
 int main() {
@@ -171,18 +164,18 @@ void drawEnemies(int erase) {
  *  - int erase - TRUE if you want to erase the ship
  *		  FALSE if you want to draw the ship
  *********************************************************/
-void drawShip(SHIP* ship, int erase) {
+void drawShip(int erase) {
 
     //If we're not erasing, draw the ship in it's current location 
     //  otherwise, erase at the ship's location
     if (!erase) {
 	int r;
-	for(r = 0; r < 20; r++) {
-	    DMANow(3, &(ship_picture[r*20]), &VIDEO_BUFFER[OFFSET(ship->row + r, ship->col, SCREENWIDTH)],
+	for(r = 0; r < ship.height; r++) {
+	    DMANow(3, &(ship_picture[r*20]), &VIDEO_BUFFER[OFFSET(ship.row + r, ship.col, SCREENWIDTH)],
 		    20 |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
 	}
     } else {
-	drawRect(ship->row, ship->col, 20, 20, BGCOLOR);
+	drawRect(ship_old.row, ship_old.col, 20, 20, BGCOLOR);
     }
 }
 
@@ -516,7 +509,7 @@ void eraseOldObjects() {
     //Erases old positions of enemies, bullets, and ship.
     drawEnemies(TRUE);
     drawBullets(TRUE);
-    drawShip(&ship_old, TRUE);
+    drawShip(TRUE);
 }
 
 /** drawNewObjects ****************************************************
@@ -525,7 +518,7 @@ void eraseOldObjects() {
 void drawNewObjects() {
 
     //Draw the new positions of the ship, bullets, and enemies.
-    drawShip(&ship, FALSE);
+    drawShip(FALSE);
     drawBullets(FALSE);
     drawEnemies(FALSE);
 }
@@ -534,6 +527,8 @@ void drawNewObjects() {
  * Draws the game text that will be displayed on the screen
  ******************************************************************/
 void drawGameText() {
+
+    char displayStr[20];
 
     int i = 0;
 
@@ -544,11 +539,12 @@ void drawGameText() {
     drawRect(145, 0, 15, 240, BGCOLOR);
 
     //Print the score to a string array and then display it.
-    sprintf(scoreStr, "Score: %04d", score);
-    drawString(150, 160, scoreStr, BLUE);
+    sprintf(displayStr, "Score: %04d", score);
+    drawString(150, 160, displayStr, BLUE);
 
     //Draw the health string to the screen.
-    drawString(150, 10, healthStr, BLUE);
+    sprintf(displayStr, "Health:");
+    drawString(150, 10, displayStr, BLUE);
 
     //Draw a health bar picture per health the user has.
     for(i = 0; i < ship.health; i++) {
@@ -635,11 +631,16 @@ void updateOldVariables() {
  * Draws the pause screen to the display.
  ******************************************************************/
 void displayPauseScreen() {
+
     fillBackground(BLACK);
-    char pauseStr[] = "PAUSED";
-    sprintf(scoreStr, "SCORE: %04d", score);
-    drawString(86, 120-33, scoreStr, BLUE);
-    drawString(76, 102, pauseStr, BLUE);
+
+    char displayStr[20] = "PAUSED";
+
+    sprintf(displayStr, "PAUSED");
+    drawString(76, 102, displayStr, BLUE);
+
+    sprintf(displayStr, "SCORE: %04d", score);
+    drawString(86, 120-33, displayStr, BLUE);
 }
 
 /** checkPauseButtons ****************************************************
