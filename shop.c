@@ -11,9 +11,9 @@ unsigned short money = 0;
 //Keeps track of where the cursor is in the shop.
 char shop_cursor_pos = 0;
 
-UPGRADE weapon_damage_path[5];
-UPGRADE fire_rate_path[3];
-UPGRADE shot_count_path[3];
+UPGRADE weapon_damage_path[MAX_DMG];
+UPGRADE fire_rate_path[MAX_FIRE_RATE];
+UPGRADE shot_count_path[MAX_SHOT_COUNT];
 
 unsigned char weapon_damage_index = 0;
 unsigned char fire_rate_index = 0;
@@ -50,14 +50,10 @@ void assignUpgradePaths() {
     fire_rate_path[2].upgrade_value = 1;
 
     shot_count_path[0].upgrade_cost = 2000;
-    shot_count_path[0].upgrade_value = 10;
+    shot_count_path[0].upgrade_value = 2;
 
-    shot_count_path[1].upgrade_cost = 5000;
-    shot_count_path[1].upgrade_value = 5;
-
-    shot_count_path[2].upgrade_cost = 9999;
-    shot_count_path[2].upgrade_value = 1;
-
+    shot_count_path[1].upgrade_cost = 9999;
+    shot_count_path[1].upgrade_value = 3;
 }
 
 /** createWeaponUpgradeString **********************************
@@ -89,6 +85,34 @@ void createWeaponUpgradeString(char* str) {
     }
 }
 
+/** createShotCountUpgradeString ******************************
+ *
+ *************************************************************/
+void createShotCountUpgradeString(char* str) {
+
+    //If the weapon is not already at max damage
+    if(shot_count_index != MAX_SHOT_COUNT) {
+
+        //Figure out what the cost of the next weapon upgrade is.
+        int cost = shot_count_path[shot_count_index].upgrade_cost;
+
+        //Place initial string into array.
+        sprintf(str, "SHOT COUNT.........%06d", cost);
+
+        //Blank out the leading zeros with periods.
+        char* temp = str;
+        while(*temp != '.') temp++;
+        while(*temp == '.') temp++;
+        while(*temp == '0') {
+            *temp = '.';
+            temp++;
+        }
+    }
+    else {
+        sprintf(str, "SHOT COUNT..........MAXED");
+    }
+}
+
 /** purchaseItem **********************************************
  * The user is trying to purchase the item at the given cursor
  *  position.
@@ -96,7 +120,7 @@ void createWeaponUpgradeString(char* str) {
 void purchaseItem() {
 
     //Erases any previous purchase messages from the screen
-    drawRect(65,0,8,240,BLACK);
+    drawRect(SHOP_MESSAGE_ROW,0,8,240,BLACK);
 
     //If the cursor is hovering over health...
     if(shop_cursor_pos == 0) {
@@ -105,15 +129,21 @@ void purchaseItem() {
     //If the cursor is trying to upgrade weapons...
     else if(shop_cursor_pos == 1) {
         if(weapon_damage_index != MAX_DMG) {
-            purchaseWeaponUpgrade();
+            purchaseWeaponDamageUpgrade();
+        }
+    }
+    //If the cursor is trying to upgrade shot count...
+    else if(shop_cursor_pos == 2) {
+        if(shot_count_index != MAX_SHOT_COUNT) {
+            purchaseShotCountUpgrade();
         }
     }
 }
 
-/** purchaseWeaponUpgrade ************************************
+/** purchaseWeaponDamageUpgrade *******************************
  * Attempts to purchase a weapon upgrade for the ship.
  *************************************************************/
-void purchaseWeaponUpgrade() {
+void purchaseWeaponDamageUpgrade() {
 
     //Determine the upgrade cost of the next weapon.
     int cost = weapon_damage_path[weapon_damage_index].upgrade_cost;
@@ -125,7 +155,7 @@ void purchaseWeaponUpgrade() {
         ship.weapon_damage = weapon_damage_path[weapon_damage_index].upgrade_value;
 
         //Display a confirmation message to the user.
-        drawString(65, 120-3*strlen("WEAPON UPGRADED!"), "WEAPON UPGRADED!", GREEN);
+        drawString(SHOP_MESSAGE_ROW, 120-3*strlen("WEAPON UPGRADED!"), "WEAPON UPGRADED!", GREEN);
 
         //Take their money.
         money -= cost;
@@ -141,11 +171,45 @@ void purchaseWeaponUpgrade() {
     }
     //If they don't have enough moeny, let them know.
     else {
-        drawString(65, 120-3*strlen("SORRY, NOT ENOUGH MONEY!"), "SORRY, NOT ENOUGH MONEY!", RED);
+        drawString(SHOP_MESSAGE_ROW, 120-3*strlen("SORRY, NOT ENOUGH MONEY!"), "SORRY, NOT ENOUGH MONEY!", RED);
     }
 
 }
 
+/** purchaseShotCountUpgrade ***********************************
+ * 
+ *************************************************************/
+void purchaseShotCountUpgrade() {
+
+    //Determine the upgrade cost of the next weapon.
+    int cost = shot_count_path[shot_count_index].upgrade_cost;
+
+    //If the user has enough money to purchase the weapon...
+    if(money >= cost) {
+
+        //Upgrade the ship's weapon based on how much the user paid.
+        ship.shot_count = shot_count_path[shot_count_index].upgrade_value;
+
+        //Display a confirmation message to the user.
+        drawString(SHOP_MESSAGE_ROW, 120-3*strlen("SHOT COUNT UPGRADED!"), "SHOT COUNT UPGRADED!", GREEN);
+
+        //Take their money.
+        money -= cost;
+
+        //Advance the weapon damage path index.
+        shot_count_index++;
+
+        //Update the price of the next weapon upgrade in the shop.
+        drawRect(50,0,10,240,BLACK);
+        char tempStr[26];
+        createShotCountUpgradeString(tempStr);
+        drawString(50, 120-3*strlen(tempStr), tempStr, BLUE);
+    }
+    //If they don't have enough moeny, let them know.
+    else {
+        drawString(SHOP_MESSAGE_ROW, 120-3*strlen("SORRY, NOT ENOUGH MONEY!"), "SORRY, NOT ENOUGH MONEY!", RED);
+    }
+}
 /** purchaseHealth ********************************************
  * Attempts to purchase health for the ship.
  *************************************************************/
@@ -154,7 +218,7 @@ void purchaseHealth() {
     //If the user is already at maximum health, don't let them
     //  purchase more and inform them why.
     if(ship.health == MAX_HEALTH) {
-        drawString(65, 120-3*strlen("SORRY, ALREADY AT MAX HEALTH"), "SORRY, ALREADY AT MAX HEALTH", RED);
+        drawString(SHOP_MESSAGE_ROW, 120-3*strlen("SORRY, ALREADY AT MAX HEALTH"), "SORRY, ALREADY AT MAX HEALTH", RED);
     }
     else {
 
@@ -162,7 +226,7 @@ void purchaseHealth() {
         if(money >= 50) {
 
             //Let them know
-            drawString(65, 120-3*strlen("HEALTH ADDED!"), "HEALTH ADDED!", GREEN);
+            drawString(SHOP_MESSAGE_ROW, 120-3*strlen("HEALTH ADDED!"), "HEALTH ADDED!", GREEN);
 
             //Increase their health and decrease their money.
             ship.health++;
@@ -170,7 +234,7 @@ void purchaseHealth() {
         }
         //If the user doesn't have enough money, let them know.
         else {
-            drawString(65, 120-3*strlen("SORRY, NOT ENOUGH MONEY!"), "SORRY, NOT ENOUGH MONEY!", RED);
+            drawString(SHOP_MESSAGE_ROW, 120-3*strlen("SORRY, NOT ENOUGH MONEY!"), "SORRY, NOT ENOUGH MONEY!", RED);
         }
     }
 }

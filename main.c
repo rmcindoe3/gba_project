@@ -698,6 +698,9 @@ void displayShopScreen() {
         createWeaponUpgradeString(shopStr);
         drawString(40, 120-3*strlen(shopStr), shopStr, BLUE);
 
+        createShotCountUpgradeString(shopStr);
+        drawString(50, 120-3*strlen(shopStr), shopStr, BLUE);
+
         sprintf(shopStr, "Press A to Purchase Item");
         drawString(90, 120-3*strlen(shopStr), shopStr, BLUE);
 
@@ -726,7 +729,7 @@ void displayShopScreen() {
     drawString(142, 10, shopStr, BLUE);
 
     //Update the cursor's location.
-    drawRect(30,30,20,6,BLACK);
+    drawRect(30,30,40,6,BLACK);
     drawCursor();
 
 }
@@ -750,7 +753,7 @@ void checkShopButtons() {
 
     //If the user pressed down, move the cursor down
     if(BUTTON_PRESSED(BUTTON_DOWN)) {
-        if(shop_cursor_pos != 1) {
+        if(shop_cursor_pos != 2) {
             shop_cursor_pos++;
         }
     }
