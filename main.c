@@ -466,7 +466,7 @@ char determineBulletChance(ENEMY* enemy) {
         chance = 100;
     }
     else if(enemy->type == BOSS) {
-        chance = 50 - 2*(1+getCurrentLevel());
+        chance = 50 - 4*(1+getCurrentLevel());
     }
     return chance;
 }

@@ -26,7 +26,7 @@ extern char level_six[21];
 extern char level_seven[21];
 extern char level_eight[21];
 extern char level_nine[21];
-extern char level_ten[21];
+extern char level_ten[41];
 
 //These are all documented in levels.c
 void reset_level(void);

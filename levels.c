@@ -96,9 +96,11 @@ char level_nine[21] = {
 };
 
 //Level ten enemy order.
-char level_ten[21] = {
-    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
-    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
+char level_ten[41] = {
+    NORM, BIGG, DBLS, TRIS, HOME, NORM, BIGG, DBLS, TRIS, HOME, 
+    NORM, BIGG, DBLS, TRIS, HOME, NORM, BIGG, DBLS, TRIS, HOME, 
+    NORM, BIGG, DBLS, TRIS, HOME, NORM, BIGG, DBLS, TRIS, HOME, 
+    NORM, BIGG, DBLS, TRIS, HOME, NORM, BIGG, DBLS, TRIS, HOME, 
     BOSS
 };
 

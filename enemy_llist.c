@@ -328,7 +328,12 @@ void initEnemy(ENEMY* enemy, char type) {
     }
 
     if(type != BOSS) {
-        enemy->health = enemy_type_health[type];
+        if(getCurrentLevel() != 9) {
+            enemy->health = enemy_type_health[type];
+        }
+        else {
+            enemy->health = 125;
+        }
     }
     else if(type == BOSS) {
         enemy->health = 40*(1+getCurrentLevel());
