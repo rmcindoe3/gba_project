@@ -41,13 +41,10 @@ void assignUpgradePaths() {
     weapon_damage_path[4].upgrade_value = 15;
 
     fire_rate_path[0].upgrade_cost = 500;
-    fire_rate_path[0].upgrade_value = 10;
+    fire_rate_path[0].upgrade_value = 6;
 
     fire_rate_path[1].upgrade_cost = 2000;
-    fire_rate_path[1].upgrade_value = 5;
-
-    fire_rate_path[2].upgrade_cost = 5000;
-    fire_rate_path[2].upgrade_value = 1;
+    fire_rate_path[1].upgrade_value = 1;
 
     shot_count_path[0].upgrade_cost = 2000;
     shot_count_path[0].upgrade_value = 2;

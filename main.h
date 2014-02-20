@@ -15,6 +15,8 @@
 //The background color of our game.
 #define BGCOLOR CYAN
 
+#define STARTING_FIRE_RATE 12
+
 //Struct that contains the relevant information for our SHIP
 typedef struct ship {
     char row;

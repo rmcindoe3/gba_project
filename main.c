@@ -300,9 +300,19 @@ char shipCollision(BULLET* bullet) {
  ******************************************************************/
 void checkGameButtons() {
 
-    //If button A is pressed and we don't have too many bullets
-    //	shot out already, then shoot a bullet
-    if(BUTTON_PRESSED(BUTTON_A)) {
+    //Static variable to limit how often the user can shoot a bullet.
+    //  Designed to be set to the ship's fire rate, and only allows new
+    //  bullets to be shot at most every "ship.fire_rate" loop cycles.
+    static unsigned char fire_rate_counter = STARTING_FIRE_RATE;
+
+    //If the counter is not already at zero, decrement it.
+    if(fire_rate_counter) {
+        fire_rate_counter--;
+    }
+
+    //If button A is pressed and our fire rate counter is already zero.
+    //  then shoot a bullet.
+    if(BUTTON_PRESSED(BUTTON_A) && !fire_rate_counter) {
         if(ship.shot_count == 1) {
             add_to_bullet_list(ship.row, ship.col + ship.width/2, 0, FALSE);
             bullets_shot++;
@@ -318,6 +328,9 @@ void checkGameButtons() {
             add_to_bullet_list(ship.row, ship.col + ship.width/2, -2, FALSE);
             bullets_shot += 3;
         }
+
+        //Reset the fire rate counter.
+        fire_rate_counter = ship.fire_rate;
     }
 
     //If the start button is pressed, pause the game
@@ -819,7 +832,7 @@ void init() {
     ship.width = 20;
     ship.health = 5;
     ship.weapon_damage = 1;
-    ship.fire_rate = 20;
+    ship.fire_rate = STARTING_FIRE_RATE;
     ship.shot_count = 1;
 
     //Reset money and score

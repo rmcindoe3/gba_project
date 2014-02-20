@@ -2,7 +2,7 @@
 #define	SHOP_H
 
 #define MAX_DMG 5
-#define MAX_FIRE_RATE 3
+#define MAX_FIRE_RATE 2
 #define MAX_SHOT_COUNT 2
 
 #define SHOP_MESSAGE_ROW 75
