@@ -113,6 +113,34 @@ void createShotCountUpgradeString(char* str) {
     }
 }
 
+/** createFireRateUpgradeString *******************************
+ *
+ *************************************************************/
+void createFireRateUpgradeString(char* str) {
+
+    //If the weapon is not already at max damage
+    if(fire_rate_index != MAX_FIRE_RATE) {
+
+        //Figure out what the cost of the next weapon upgrade is.
+        int cost = fire_rate_path[fire_rate_index].upgrade_cost;
+
+        //Place initial string into array.
+        sprintf(str, "FIRE RATE..........%06d", cost);
+
+        //Blank out the leading zeros with periods.
+        char* temp = str;
+        while(*temp != '.') temp++;
+        while(*temp == '.') temp++;
+        while(*temp == '0') {
+            *temp = '.';
+            temp++;
+        }
+    }
+    else {
+        sprintf(str, "FIRE RATE...........MAXED");
+    }
+}
+
 /** purchaseItem **********************************************
  * The user is trying to purchase the item at the given cursor
  *  position.
@@ -136,6 +164,12 @@ void purchaseItem() {
     else if(shop_cursor_pos == 2) {
         if(shot_count_index != MAX_SHOT_COUNT) {
             purchaseShotCountUpgrade();
+        }
+    }
+    //If the cursor is trying to upgrade fire rate...
+    else if(shop_cursor_pos == 3) {
+        if(fire_rate_index != MAX_FIRE_RATE) {
+            purchaseFireRateUpgrade();
         }
     }
 }
@@ -210,6 +244,42 @@ void purchaseShotCountUpgrade() {
         drawString(SHOP_MESSAGE_ROW, 120-3*strlen("SORRY, NOT ENOUGH MONEY!"), "SORRY, NOT ENOUGH MONEY!", RED);
     }
 }
+
+/** purchaseFireRateUpgrade ************************************
+ *
+ *************************************************************/
+void purchaseFireRateUpgrade() {
+
+    //Determine the upgrade cost of the next weapon.
+    int cost = fire_rate_path[fire_rate_index].upgrade_cost;
+
+    //If the user has enough money to purchase the weapon...
+    if(money >= cost) {
+
+        //Upgrade the ship's weapon based on how much the user paid.
+        ship.fire_rate = fire_rate_path[fire_rate_index].upgrade_value;
+
+        //Display a confirmation message to the user.
+        drawString(SHOP_MESSAGE_ROW, 120-3*strlen("FIRE RATE UPGRADED!"), "FIRE RATE UPGRADED!", GREEN);
+
+        //Take their money.
+        money -= cost;
+
+        //Advance the fire rate path index.
+        fire_rate_index++;
+
+        //Update the price of the next fire rate upgrade in the shop.
+        drawRect(60,0,10,240,BLACK);
+        char tempStr[26];
+        createFireRateUpgradeString(tempStr);
+        drawString(60, 120-3*strlen(tempStr), tempStr, BLUE);
+    }
+    //If they don't have enough moeny, let them know.
+    else {
+        drawString(SHOP_MESSAGE_ROW, 120-3*strlen("SORRY, NOT ENOUGH MONEY!"), "SORRY, NOT ENOUGH MONEY!", RED);
+    }
+}
+
 /** purchaseHealth ********************************************
  * Attempts to purchase health for the ship.
  *************************************************************/

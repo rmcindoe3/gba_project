@@ -34,9 +34,11 @@ void purchaseItem(void);
 
 void createWeaponUpgradeString(char* str);
 void createShotCountUpgradeString(char* str);
+void createFireRateUpgradeString(char* str);
 
 void purchaseWeaponDamageUpgrade(void);
 void purchaseShotCountUpgrade(void);
+void purchaseFireRateUpgrade(void);
 
 void purchaseHealth(void);
 
