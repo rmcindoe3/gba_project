@@ -84,14 +84,14 @@ char level_seven[21] = {
 //Level eight enemy order.
 char level_eight[21] = {
     TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
-    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
+    HOME, HOME, HOME, HOME, HOME, HOME, HOME, HOME, HOME, HOME,
     BOSS
 };
 
 //Level nine enemy order.
 char level_nine[21] = {
-    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
-    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
+    HOME, HOME, HOME, HOME, HOME, HOME, HOME, HOME, HOME, HOME,
+    HOME, HOME, HOME, HOME, HOME, HOME, HOME, HOME, HOME, HOME,
     BOSS
 };
 

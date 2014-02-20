@@ -226,6 +226,10 @@ void drawEnemy(ENEMY* enemy) {
         pic = dbl_enemy_full_health_picture;
         half_health_pic = dbl_enemy_half_health_picture;
     }
+    else if(enemy->type == HOME) {
+        pic = home_enemy_full_health_picture;
+        half_health_pic = home_enemy_half_health_picture;
+    }
 
     //Determine which type of enemy we're drawing, and select the appropriate picture.
     if(enemy->type != BOSS) {
@@ -391,6 +395,9 @@ void enemiesFire() {
         else if(enemy_list->val->type == DBLS) {
             chance = 100;
         }
+        else if(enemy_list->val->type == HOME) {
+            chance = 100;
+        }
         else if(enemy_list->val->type == BOSS) {
             chance = 10;
         }
@@ -399,7 +406,7 @@ void enemiesFire() {
 	if((rand()%(chance)) == 0) {
 
             //If we have a normal, big, or boss enemy, then shoot one bullet that doesn't have a horz velocity.
-            if(enemy_list->val->type == NORM || enemy_list->val->type == BIGG || enemy_list->val->type == BOSS) { 
+            if(enemy_list->val->type == NORM || enemy_list->val->type == BIGG || enemy_list->val->type == BOSS || enemy_list->val->type == HOME) { 
                 e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, 0, FALSE);
             }
             //If we have a tri enemy type, then shoot two additional bullets with 2 and -2 horizontal velocity.

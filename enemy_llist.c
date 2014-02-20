@@ -3,7 +3,7 @@
 #include "levels.h"
 #include "text.h"
 
-unsigned short enemy_type_health[5];
+unsigned short enemy_type_health[NUM_ENEMY_TYPES];
 
 struct enemy_llist *enemy_head = NULL;
 struct enemy_llist *enemy_curr = NULL;
@@ -20,6 +20,7 @@ void assignEnemyTypeHealth() {
     enemy_type_health[BIGG] = 8;
     enemy_type_health[DBLS] = 16;
     enemy_type_health[TRIS] = 32;
+    enemy_type_health[HOME] = 64;
 }
 
 struct enemy_llist* create_enemy_list(char type)

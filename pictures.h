@@ -24,6 +24,8 @@ extern const unsigned short tri_enemy_full_health_picture[20*10];
 extern const unsigned short tri_enemy_half_health_picture[20*10];
 extern const unsigned short dbl_enemy_full_health_picture[20*10];
 extern const unsigned short dbl_enemy_half_health_picture[20*10];
+extern const unsigned short home_enemy_full_health_picture[20*10];
+extern const unsigned short home_enemy_half_health_picture[20*10];
 extern const unsigned short health_bar[8*8];
 extern const unsigned short bull_colors[6];
 
