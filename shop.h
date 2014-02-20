@@ -17,6 +17,10 @@ extern UPGRADE weapon_damage_path[MAX_DMG];
 extern UPGRADE fire_rate_path[MAX_FIRE_RATE];
 extern UPGRADE shot_count_path[MAX_SHOT_COUNT];
 
+extern unsigned char weapon_damage_index;
+extern unsigned char fire_rate_index;
+extern unsigned char shot_count_index;
+
 //Keeps track of how much money the user has.
 extern unsigned short money;
 

@@ -809,7 +809,7 @@ void init() {
     empty_bullet_list();
     e_empty_bullet_list();
 
-    //Relocates the ship to the starting location.
+    //Resets ship to starting values
     ship.row = 120;
     ship.col = 80;
     ship.height = 20;
@@ -818,11 +818,16 @@ void init() {
     ship.weapon_damage = 1;
     ship.fire_rate = 20;
     ship.shot_count = 1;
-    
+
     //Reset money and score
     money = 0;
     score = 0;
-    
+
+    //Resets our upgrade paths
+    weapon_damage_index = 0;
+    fire_rate_index = 0;
+    shot_count_index = 0;
+
     //Reset bullet hit rate variables
     bullets_shot = 0;
     bullets_hit = 0;
@@ -833,5 +838,6 @@ void init() {
     ship_old.height = ship.height;
     ship_old.width = ship.width;
 
+    //Tells the game to display what level we're on for 100 cycles
     displayLevelString = 100;
 }
