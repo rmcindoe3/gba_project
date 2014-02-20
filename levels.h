@@ -1,7 +1,7 @@
 #ifndef LEVELS_H_INCLUDED
 #define LEVELS_H_INCLUDED
 
-#define NUM_LEVELS 6
+#define NUM_LEVELS 10
 #define STARTING_LEVEL 0
 
 //The different types of enemies in the game.
@@ -21,6 +21,10 @@ extern char level_three[21];
 extern char level_four[21];
 extern char level_five[21];
 extern char level_six[21];
+extern char level_seven[21];
+extern char level_eight[21];
+extern char level_nine[21];
+extern char level_ten[21];
 
 //These are all documented in levels.c
 void reset_level(void);

@@ -13,6 +13,10 @@ char level_three_string[15] = "LEVEL THREE";
 char level_four_string[15] = "LEVEL FOUR";
 char level_five_string[15] = "LEVEL FIVE";
 char level_six_string[15] = "LEVEL SIX";
+char level_seven_string[15] = "LEVEL SEVEN";
+char level_eight_string[15] = "LEVEL EIGHT";
+char level_nine_string[15] = "LEVEL NINE";
+char level_ten_string[15] = "LEVEL TEN";
 
 //Array of our levels.
 char* levels[NUM_LEVELS] = {
@@ -21,7 +25,11 @@ char* levels[NUM_LEVELS] = {
     level_three,
     level_four,
     level_five,
-    level_six
+    level_six,
+    level_seven,
+    level_eight,
+    level_nine,
+    level_ten
 };
 
 //Level one enemy order.
@@ -65,6 +73,35 @@ char level_six[21] = {
     TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
     BOSS
 };
+
+//Level seven enemy order.
+char level_seven[21] = {
+    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
+    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
+    BOSS
+};
+
+//Level eight enemy order.
+char level_eight[21] = {
+    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
+    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
+    BOSS
+};
+
+//Level nine enemy order.
+char level_nine[21] = {
+    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
+    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
+    BOSS
+};
+
+//Level ten enemy order.
+char level_ten[21] = {
+    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
+    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
+    BOSS
+};
+
 
 /** getNextEnemyType *****************************************************
  * Returns the next enemy type for our current level.
@@ -121,6 +158,10 @@ char* getLevelString(void) {
     if(curr_level == 3) return level_four_string;
     if(curr_level == 4) return level_five_string;
     if(curr_level == 5) return level_six_string;
+    if(curr_level == 6) return level_seven_string;
+    if(curr_level == 7) return level_eight_string;
+    if(curr_level == 8) return level_nine_string;
+    if(curr_level == 9) return level_ten_string;
 }
 
 /** reset_level *****************************************************
