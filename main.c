@@ -33,6 +33,9 @@ int main() {
     //Initializes the upgrade paths in our shop.
     assignUpgradePaths();
 
+    //Initializes the enemy health array
+    assignEnemyTypeHealth();
+
     //Main loop
     while(1) {
 
@@ -208,7 +211,7 @@ void drawEnemy(ENEMY* enemy) {
     if(enemy->type == NORM) {
         for(i = 0; i < enemy->height; i++) {
             //If the enemy has more than 5 health, use the full health picture source array
-            if(enemy->health > 5) {
+            if(enemy->health > enemy_type_health[enemy->type]/2) {
                 DMANow(3, &(enemy_full_health_picture[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
                         enemy->width |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
             }
@@ -223,7 +226,7 @@ void drawEnemy(ENEMY* enemy) {
 
         for(i = 0; i < enemy->height; i++) {
             //If the enemy has more than 10 health, use the full health picture source array
-            if(enemy->health > 10) {
+            if(enemy->health > enemy_type_health[enemy->type]/2) {
                 DMANow(3, &(big_enemy_full_health_picture[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
                         enemy->width |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
             }
@@ -238,7 +241,7 @@ void drawEnemy(ENEMY* enemy) {
 
         for(i = 0; i < enemy->height; i++) {
             //If the enemy has more than 20 health, use the full health picture source array
-            if(enemy->health > 20) {
+            if(enemy->health > enemy_type_health[enemy->type]/2) {
                 DMANow(3, &(tri_enemy_full_health_picture[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
                         enemy->width |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
             }

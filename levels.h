@@ -5,10 +5,10 @@
 #define STARTING_LEVEL 0
 
 //The different types of enemies in the game.
-#define NORM 0x01
-#define BOSS 0x02
-#define BIGG 0x03
-#define TRIS 0x04
+#define NORM 0x00
+#define BOSS 0x01
+#define BIGG 0x02
+#define TRIS 0x03
 
 //These are all documented in levels.c
 extern unsigned char level_index;

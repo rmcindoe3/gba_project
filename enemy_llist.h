@@ -37,9 +37,13 @@ struct enemy_llist
     struct enemy_llist *next;
 };
 
+extern unsigned short enemy_type_health[4];
+
 extern struct enemy_llist *enemy_head;
 extern struct enemy_llist *enemy_curr;
 extern int enemy_listSize;
+
+void assignEnemyTypeHealth(void);
 
 struct enemy_llist* create_enemy_list(char type);
 struct enemy_llist* add_to_enemy_list(char type, int add_to_end);

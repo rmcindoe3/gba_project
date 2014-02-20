@@ -3,11 +3,23 @@
 #include "levels.h"
 #include "text.h"
 
+unsigned short enemy_type_health[4];
+
 struct enemy_llist *enemy_head = NULL;
 struct enemy_llist *enemy_curr = NULL;
 int enemy_listSize = 0;
 
 signed short curr_velocity = RIGHT;
+
+/** assignEnemyTypeHealth *************************************
+ * Initializes the enemy_type_health array.
+ *************************************************************/
+void assignEnemyTypeHealth() {
+
+    enemy_type_health[NORM] = 4;
+    enemy_type_health[BIGG] = 8;
+    enemy_type_health[TRIS] = 16;
+}
 
 struct enemy_llist* create_enemy_list(char type)
 {
@@ -313,14 +325,8 @@ void initEnemy(ENEMY* enemy, char type) {
 	enemy->health = 10;
     }
 
-    if(type == NORM) {
-	enemy->health = 10;
-    }
-    else if(type == BIGG) {
-        enemy->health = 20;
-    }
-    else if(type == TRIS) {
-        enemy->health = 40;
+    if(type != BOSS) {
+        enemy->health = enemy_type_health[type];
     }
     else if(type == BOSS) {
         enemy->health = 40*(1+getCurrentLevel());
