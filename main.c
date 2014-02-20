@@ -207,47 +207,33 @@ void drawEnemy(ENEMY* enemy) {
 
     int i = 0;
 
-    //Determine which type of enemy we're drawing, and select the appropriate picture.
+    unsigned short* pic;
+    unsigned short* half_health_pic;
+
     if(enemy->type == NORM) {
+        pic = enemy_full_health_picture;
+        half_health_pic = enemy_half_health_picture;
+    }
+    else if(enemy->type == BIGG) {
+        pic = big_enemy_full_health_picture;
+        half_health_pic = big_enemy_half_health_picture;
+    }
+    else if(enemy->type == TRIS) {
+        pic = tri_enemy_full_health_picture;
+        half_health_pic = tri_enemy_half_health_picture;
+    }
+
+    //Determine which type of enemy we're drawing, and select the appropriate picture.
+    if(enemy->type != BOSS) {
         for(i = 0; i < enemy->height; i++) {
             //If the enemy has more than 5 health, use the full health picture source array
             if(enemy->health > enemy_type_health[enemy->type]/2) {
-                DMANow(3, &(enemy_full_health_picture[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
+                DMANow(3, &(pic[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
                         enemy->width |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
             }
             //If the enemy has 5 or less health, use the half health picture source array
             else {
-                DMANow(3, &(enemy_half_health_picture[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
-                        enemy->width |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
-            }
-        }
-    }
-    else if(enemy->type == BIGG) {
-
-        for(i = 0; i < enemy->height; i++) {
-            //If the enemy has more than 10 health, use the full health picture source array
-            if(enemy->health > enemy_type_health[enemy->type]/2) {
-                DMANow(3, &(big_enemy_full_health_picture[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
-                        enemy->width |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
-            }
-            //If the enemy has 10 or less health, use the half health picture source array
-            else {
-                DMANow(3, &(big_enemy_half_health_picture[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
-                        enemy->width |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
-            }
-        }
-    }
-    else if(enemy->type == TRIS) {
-
-        for(i = 0; i < enemy->height; i++) {
-            //If the enemy has more than 20 health, use the full health picture source array
-            if(enemy->health > enemy_type_health[enemy->type]/2) {
-                DMANow(3, &(tri_enemy_full_health_picture[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
-                        enemy->width |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
-            }
-            //If the enemy has 20 or less health, use the half health picture source array
-            else {
-                DMANow(3, &(tri_enemy_half_health_picture[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
+                DMANow(3, &(half_health_pic[i*enemy->width]), &VIDEO_BUFFER[OFFSET(enemy->row + i, enemy->col, SCREENWIDTH)],
                         enemy->width |  DMA_DESTINATION_INCREMENT | DMA_SOURCE_INCREMENT | DMA_ON);
             }
         }
