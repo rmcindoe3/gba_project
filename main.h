@@ -70,6 +70,12 @@ void checkPauseButtons(void);
 void checkShopButtons(void);
 
 void enemiesFire(void);
+char determineBulletChance(ENEMY* enemy);
+void shootNormBullet(ENEMY* enemy);
+void shootDoubleBullet(ENEMY* enemy);
+void shootTripleBullet(ENEMY* enemy);
+void shootHomingBullet(ENEMY* enemy);
+
 void moveGameObjects(void);
 
 void eraseOldObjects(void);

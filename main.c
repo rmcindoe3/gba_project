@@ -382,47 +382,56 @@ void enemiesFire() {
 
         //Set up a chance variable based on what type of enemy we have.
         //  (1/chance) is the probability that a bullet will be shot.
-        char chance;
-        if(enemy_list->val->type == NORM) {
-            chance = 100;
-        }
-        else if(enemy_list->val->type == BIGG) {
-            chance = 50;
-        }
-        else if(enemy_list->val->type == TRIS) {
-            chance = 150;
-        }
-        else if(enemy_list->val->type == DBLS) {
-            chance = 100;
-        }
-        else if(enemy_list->val->type == HOME) {
-            chance = 100;
-        }
-        else if(enemy_list->val->type == BOSS) {
-            chance = 10;
-        }
+        char chance = determineBulletChance(enemy_list->val);
 
 	//Randomly generate a number and test to see if we want to shoot a bullet.
 	if((rand()%(chance)) == 0) {
 
             //If we have a normal, big, or boss enemy, then shoot one bullet that doesn't have a horz velocity.
-            if(enemy_list->val->type == NORM || enemy_list->val->type == BIGG || enemy_list->val->type == BOSS) { 
-                e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, 0, FALSE);
+            if(enemy_list->val->type == NORM || enemy_list->val->type == BIGG) { 
+                shootNormBullet(enemy_list->val);
             }
             //If we have a homing enemy, then shoot a bullet with homing horz velocity.
             else if(enemy_list->val->type == HOME) { 
-                e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, HOMING, FALSE);
+                shootHomingBullet(enemy_list->val);
             }
             //If we have a tri enemy type, then shoot two additional bullets with 2 and -2 horizontal velocity.
             else if(enemy_list->val->type == TRIS) {
-                e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, 0, FALSE);
-                e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, 2, FALSE);
-                e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, -2, FALSE);
+                shootTripleBullet(enemy_list->val);
             }
             //If we have a double enemy type, then shoot two bullets with 3 and -3 horizontal velocity.
             else if(enemy_list->val->type == DBLS) {
-                e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, 3, FALSE);
-                e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, -3, FALSE);
+                shootDoubleBullet(enemy_list->val);
+            }
+            //If we have a boss type enemy, shoot different things based on what level we're in.
+            else if(enemy_list->val->type == BOSS) {
+                if(getCurrentLevel() >= 0 && getCurrentLevel() <= 2) {
+                    shootNormBullet(enemy_list->val);
+                }
+                else if(getCurrentLevel() >= 3 && getCurrentLevel() <= 4) {
+                    shootDoubleBullet(enemy_list->val);
+                }
+                else if(getCurrentLevel() >= 5 && getCurrentLevel() <= 6) {
+                    shootTripleBullet(enemy_list->val);
+                }
+                else if(getCurrentLevel() >= 7 && getCurrentLevel() <= 8) {
+                    shootHomingBullet(enemy_list->val);
+                }
+                else if(getCurrentLevel() >= 9) {
+                    int temp = rand()%4;
+                    if(temp == 0) {
+                        shootNormBullet(enemy_list->val);
+                    }
+                    else if(temp == 1) {
+                        shootDoubleBullet(enemy_list->val);
+                    }
+                    else if(temp == 2) {
+                        shootTripleBullet(enemy_list->val);
+                    }
+                    else if(temp == 3) {
+                        shootHomingBullet(enemy_list->val);
+                    }
+                }
             }
 
 	}
@@ -430,6 +439,67 @@ void enemiesFire() {
 	enemy_list = enemy_list->next;
     }
 
+}
+
+/** determineBulletChance *************************************
+ *
+ *************************************************************/
+char determineBulletChance(ENEMY* enemy) {
+
+    //Set up a chance variable based on what type of enemy we have.
+    //  (1/chance) is the probability that a bullet will be shot.
+    char chance = 0;
+
+    if(enemy->type == NORM) {
+        chance = 100;
+    }
+    else if(enemy->type == BIGG) {
+        chance = 50;
+    }
+    else if(enemy->type == TRIS) {
+        chance = 150;
+    }
+    else if(enemy->type == DBLS) {
+        chance = 100;
+    }
+    else if(enemy->type == HOME) {
+        chance = 100;
+    }
+    else if(enemy->type == BOSS) {
+        chance = 50 - 2*(1+getCurrentLevel());
+    }
+    return chance;
+}
+
+/** shootNormBullet **********************************************
+ *
+ *************************************************************/
+void shootNormBullet(ENEMY* enemy) {
+    e_add_to_bullet_list(enemy->row+10, enemy->col+10, 0, FALSE);
+}
+
+/** shootDoubleBullet *******************************************
+ *
+ *************************************************************/
+void shootDoubleBullet(ENEMY* enemy) {
+    e_add_to_bullet_list(enemy->row+10, enemy->col+10, 3, FALSE);
+    e_add_to_bullet_list(enemy->row+10, enemy->col+10, -3, FALSE);
+}
+
+/** shootTripleBullet ********************************************
+ *
+ *************************************************************/
+void shootTripleBullet(ENEMY* enemy) {
+    e_add_to_bullet_list(enemy->row+10, enemy->col+10, 0, FALSE);
+    e_add_to_bullet_list(enemy->row+10, enemy->col+10, 2, FALSE);
+    e_add_to_bullet_list(enemy->row+10, enemy->col+10, -2, FALSE);
+}
+
+/** shootHomingBullet *******************************************
+ *
+ *************************************************************/
+void shootHomingBullet(ENEMY* enemy) {
+    e_add_to_bullet_list(enemy->row+10, enemy->col+10, HOMING, FALSE);
 }
 
 /** checkCollisions ****************************************************
