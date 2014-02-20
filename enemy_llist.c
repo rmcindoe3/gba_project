@@ -18,9 +18,9 @@ void assignEnemyTypeHealth() {
 
     enemy_type_health[NORM] = 4;
     enemy_type_health[BIGG] = 8;
-    enemy_type_health[DBLS] = 16;
-    enemy_type_health[TRIS] = 32;
-    enemy_type_health[HOME] = 64;
+    enemy_type_health[DBLS] = 25;
+    enemy_type_health[TRIS] = 50;
+    enemy_type_health[HOME] = 100;
 }
 
 struct enemy_llist* create_enemy_list(char type)
