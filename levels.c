@@ -48,20 +48,20 @@ char level_three[21] = {
 //Level four enemy order.
 char level_four[21] = {
     BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG, BIGG,
-    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
+    DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, 
     BOSS
 };
 
 //Level five enemy order.
 char level_five[21] = {
-    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
-    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
+    DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, 
+    DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, 
     BOSS
 };
 
 //Level six enemy order.
 char level_six[21] = {
-    TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
+    DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, DBLS, 
     TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS, TRIS,
     BOSS
 };

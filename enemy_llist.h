@@ -37,7 +37,7 @@ struct enemy_llist
     struct enemy_llist *next;
 };
 
-extern unsigned short enemy_type_health[4];
+extern unsigned short enemy_type_health[5];
 
 extern struct enemy_llist *enemy_head;
 extern struct enemy_llist *enemy_curr;

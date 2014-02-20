@@ -9,6 +9,7 @@
 #define BOSS 0x01
 #define BIGG 0x02
 #define TRIS 0x03
+#define DBLS 0x04
 
 //These are all documented in levels.c
 extern unsigned char level_index;

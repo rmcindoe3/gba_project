@@ -143,6 +143,34 @@ const unsigned short tri_enemy_half_health_picture[20*10] = {
     CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, BLA, GRE, CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, 
 };
 
+//Our picture array for a full health tri enemy.
+const unsigned short dbl_enemy_full_health_picture[20*10] = {
+    CYA, MAG, MAG, MAG, MAG, MAG, MAG, MAG, MAG, MAG, MAG, MAG, MAG, MAG, MAG, MAG, MAG, MAG, MAG, CYA, 
+    CYA, MAG, MAG, MAG, MAG, MAG, BLA, MAG, MAG, BLA, BLA, MAG, MAG, BLA, MAG, MAG, MAG, MAG, MAG, CYA, 
+    CYA, CYA, MAG, MAG, MAG, MAG, BLA, MAG, MAG, BLA, BLA, MAG, MAG, BLA, MAG, MAG, MAG, MAG, CYA, CYA, 
+    CYA, CYA, CYA, MAG, MAG, MAG, MAG, MAG, MAG, BLA, BLA, MAG, MAG, MAG, MAG, MAG, MAG, CYA, CYA, CYA, 
+    CYA, CYA, CYA, BLA, MAG, MAG, MAG, MAG, MAG, BLA, BLA, MAG, MAG, MAG, MAG, MAG, BLA, CYA, CYA, CYA, 
+    CYA, CYA, CYA, BLA, BLA, MAG, MAG, MAG, MAG, MAG, MAG, MAG, MAG, MAG, MAG, BLA, BLA, CYA, CYA, CYA, 
+    CYA, CYA, CYA, BLA, BLA, CYA, MAG, MAG, MAG, MAG, MAG, MAG, MAG, MAG, CYA, BLA, BLA, CYA, CYA, CYA, 
+    CYA, CYA, CYA, BLA, CYA, CYA, CYA, MAG, MAG, MAG, MAG, MAG, MAG, CYA, CYA, CYA, BLA, CYA, CYA, CYA, 
+    CYA, CYA, CYA, BLA, CYA, CYA, CYA, CYA, MAG, MAG, MAG, MAG, CYA, CYA, CYA, CYA, BLA, CYA, CYA, CYA, 
+    CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, MAG, MAG, CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, 
+};
+
+//Our picture array for a half health tri enemy.
+const unsigned short dbl_enemy_half_health_picture[20*10] = {
+    CYA, MAG, BLA, MAG, BLA, MAG, BLA, MAG, BLA, MAG, BLA, MAG, BLA, MAG, BLA, MAG, BLA, MAG, BLA, CYA, 
+    CYA, BLA, MAG, BLA, MAG, BLA, BLA, BLA, MAG, BLA, BLA, BLA, MAG, BLA, MAG, BLA, MAG, BLA, MAG, CYA, 
+    CYA, CYA, BLA, MAG, BLA, MAG, BLA, MAG, BLA, BLA, BLA, MAG, BLA, BLA, BLA, MAG, BLA, MAG, CYA, CYA, 
+    CYA, CYA, CYA, BLA, MAG, BLA, MAG, BLA, MAG, BLA, BLA, BLA, MAG, BLA, MAG, BLA, MAG, CYA, CYA, CYA, 
+    CYA, CYA, CYA, BLA, BLA, MAG, BLA, MAG, BLA, BLA, BLA, MAG, BLA, MAG, BLA, MAG, BLA, CYA, CYA, CYA, 
+    CYA, CYA, CYA, BLA, BLA, BLA, MAG, BLA, MAG, BLA, MAG, BLA, MAG, BLA, MAG, BLA, BLA, CYA, CYA, CYA, 
+    CYA, CYA, CYA, BLA, BLA, CYA, BLA, MAG, BLA, MAG, BLA, MAG, BLA, MAG, CYA, BLA, BLA, CYA, CYA, CYA, 
+    CYA, CYA, CYA, BLA, CYA, CYA, CYA, BLA, MAG, BLA, MAG, BLA, MAG, CYA, CYA, CYA, BLA, CYA, CYA, CYA, 
+    CYA, CYA, CYA, BLA, CYA, CYA, CYA, CYA, BLA, MAG, BLA, MAG, CYA, CYA, CYA, CYA, BLA, CYA, CYA, CYA, 
+    CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, BLA, MAG, CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, CYA, 
+};
+
 //Our picture array for the health bars at bottom of screen.
 const unsigned short health_bar[64] = {
     CYA, CYA, CYA, RED, RED, CYA, CYA, CYA, 
