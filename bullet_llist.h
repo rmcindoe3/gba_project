@@ -6,6 +6,8 @@
 #include <string.h>
 #include <stdbool.h>
 
+#define HOMING 100
+
 //Struct that contains relevant information for BULLET
 typedef struct bullet {
     char row;

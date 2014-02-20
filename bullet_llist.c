@@ -397,19 +397,47 @@ void moveBullets() {
             //If it's time to move horizontally, then move horizontally.
             if(temp->val->horz_step == 0) {
 
-                if(temp->val->horz_velocity > 0) {
-                    temp->val->col++;
+                //If it's a homing bullet...
+                if(temp->val->horz_velocity == HOMING) {
+
+                    //Determines which way the bullet needs to turn.
+                    signed int dist = ship.col + ship.width/2 - temp->val->col + 1;
+
+                    //Move the bullet once towards the ship.
+                    //  If the bullet is past row 80, move it an extra step towards the ship.
+                    if(dist > 0) {
+                        temp->val->col++;
+                        if(temp->val->row >= 80) temp->val->col++;
+                    }
+                    else {
+                        temp->val->col--;
+                        if(temp->val->row >= 80) temp->val->col--;
+                    }
                 }
+                //If the bullet isn't homing, then just move it according to horz_velocity
                 else {
-                    temp->val->col--;
+                    if(temp->val->horz_velocity > 0) {
+                        temp->val->col++;
+                    }
+                    else {
+                        temp->val->col--;
+                    }
                 }
 
                 //We want to reset horz_step now.
-                if(temp->val->horz_velocity < 0) {
-                    temp->val->horz_step = -1*temp->val->horz_velocity;
+                //If the bullet is a homing bullet, set step rate equal to 3 automatically.
+                if(temp->val->horz_velocity == HOMING) {
+                    temp->val->horz_step = 1;
                 }
+                //If it's not a homing bullet...
                 else {
-                    temp->val->horz_step = temp->val->horz_velocity;
+                    //We want the step rate to be positive always
+                    if(temp->val->horz_velocity < 0) {
+                        temp->val->horz_step = -1*temp->val->horz_velocity;
+                    }
+                    else {
+                        temp->val->horz_step = temp->val->horz_velocity;
+                    }
                 }
             }
         }
@@ -455,12 +483,19 @@ void e_initBullet(BULLET* bullet, int row, int col, signed short horz_velocity) 
     bullet->vert_velocity = 3;
     bullet->horz_velocity = horz_velocity;
 
-    //We want the step rate to be positive always
-    if(horz_velocity < 0) {
-        bullet->horz_step = -1*horz_velocity;
+    //If the bullet is a homing bullet, set step rate equal to 3 automatically.
+    if(horz_velocity == HOMING) {
+        bullet->horz_step = 1;
     }
+    //If it's not a homing bullet...
     else {
-        bullet->horz_step = horz_velocity;
+        //We want the step rate to be positive always
+        if(horz_velocity < 0) {
+            bullet->horz_step = -1*horz_velocity;
+        }
+        else {
+            bullet->horz_step = horz_velocity;
+        }
     }
 }
 

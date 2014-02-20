@@ -406,8 +406,12 @@ void enemiesFire() {
 	if((rand()%(chance)) == 0) {
 
             //If we have a normal, big, or boss enemy, then shoot one bullet that doesn't have a horz velocity.
-            if(enemy_list->val->type == NORM || enemy_list->val->type == BIGG || enemy_list->val->type == BOSS || enemy_list->val->type == HOME) { 
+            if(enemy_list->val->type == NORM || enemy_list->val->type == BIGG || enemy_list->val->type == BOSS) { 
                 e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, 0, FALSE);
+            }
+            //If we have a homing enemy, then shoot a bullet with homing horz velocity.
+            else if(enemy_list->val->type == HOME) { 
+                e_add_to_bullet_list(enemy_list->val->row+10, enemy_list->val->col+10, HOMING, FALSE);
             }
             //If we have a tri enemy type, then shoot two additional bullets with 2 and -2 horizontal velocity.
             else if(enemy_list->val->type == TRIS) {
@@ -486,6 +490,7 @@ void checkCollisions() {
                     else if(enemy_list->val->type == BIGG) money += 20;
                     else if(enemy_list->val->type == DBLS) money += 40;
                     else if(enemy_list->val->type == TRIS) money += 80;
+                    else if(enemy_list->val->type == HOME) money += 160;
                     else if(enemy_list->val->type == BOSS) money += 40*(1+getCurrentLevel());
 		}
 	    }
